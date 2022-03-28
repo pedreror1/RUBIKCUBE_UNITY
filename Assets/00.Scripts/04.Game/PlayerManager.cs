@@ -47,6 +47,7 @@ namespace PEDREROR1.RUBIK
 
         public SaveData saveData;
         [SerializeField] CameraController _camera;
+        public Vector2 ShuffleAmmount = new Vector2(10, 70);
         public void UpdateState(GameState newState)
         {
             currentState = newState;
@@ -229,7 +230,7 @@ namespace PEDREROR1.RUBIK
             }
             else
             {
-                int Rotations = UnityEngine.Random.Range(20, 100);
+                int Rotations = UnityEngine.Random.Range((int)ShuffleAmmount.x,(int) ShuffleAmmount.y);
                 for (int i = 0; i < Rotations; i++)
                 {
                     TryRotate(Slices[UnityEngine.Random.Range(0, Slices.Count)], UnityEngine.Random.Range(-100, 100) > 0 ? 1 : -1, 15);
@@ -278,6 +279,7 @@ namespace PEDREROR1.RUBIK
         {
             if (cubeGenerator && currentState!= GameState.Shuffling)
             {
+                MovementList.Clear();
                 UpdateState(GameState.Shuffling);
                 cubeGenerator.DestroyCube();
                 cubeGenerator.generateCube();
@@ -301,7 +303,7 @@ namespace PEDREROR1.RUBIK
         public void GoBackToMenu()
         {
             StopTimer(true);
-             
+            MovementList.Clear();
             UpdateTimerEvnt.Invoke();
             UpdateState(GameState.Menu);
             if (cubeGenerator)

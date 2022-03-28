@@ -77,6 +77,8 @@ namespace PEDREROR1.RUBIK
                 yield return new WaitForEndOfFrame();
 
             }
+
+            transform.rotation = Quaternion.Euler(startRotation + (finalRotation * direction));
             foreach (var cublet in cublets)
             {
                 cublet.cublet.setParent(null);
