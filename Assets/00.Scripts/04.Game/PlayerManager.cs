@@ -11,6 +11,8 @@ namespace PEDREROR1.RUBIK
     [RequireComponent(typeof(SaveManager))]
     public class PlayerManager : SingletonComponent<PlayerManager>
     {
+        public bool DEBUG = false;
+
         public CubeGenerator cubeGenerator;
         public enum GameState
         {
@@ -26,7 +28,7 @@ namespace PEDREROR1.RUBIK
         public Cublet currentCublet;
         Vector3 currentDirection;
         Vector3 currentFace;
-        public List<Slice> Slices;
+        public List<Slice> Slices= new List<Slice>();
         public Cublet[,,] cubeMatrix;
 
         public float gameTime;
@@ -116,7 +118,7 @@ namespace PEDREROR1.RUBIK
             {
                 isAnimating = true;
 
-                var newMovement = slice.Rotate(direction, speed);
+                var newMovement = slice.TryRotate(direction, speed);
                 if (newMovement.Key != null)
                 {
                     MovementList.Push(newMovement);
@@ -131,7 +133,7 @@ namespace PEDREROR1.RUBIK
 
                 isAnimating = true;
                 var lastMovement = MovementList.Pop();
-                lastMovement.Key.Rotate(-lastMovement.Value);
+                lastMovement.Key.TryRotate(-lastMovement.Value);
             }
         }
         public bool hasCublet => currentCublet != null;
@@ -174,6 +176,8 @@ namespace PEDREROR1.RUBIK
             }
         }
         public bool shuffleOnStart;
+        public Vector3 getCenter { get {return new Vector3((dimension - 1) / 2f, (dimension - 1) / 2f, (dimension - 1) / 2f);}
+                                   private set { }}
 
         public void StartGame()
         {
@@ -270,7 +274,7 @@ namespace PEDREROR1.RUBIK
                 {
                     yield return new WaitForEndOfFrame();
                     _camera.Rotate(new Vector2(0, 1f));
-                    _camera.CalculateZoom(-0.1f);
+                    _camera.CalculateZoom(extraZoom: -0.1f);
                     duration -= Time.deltaTime;
                 }
             }

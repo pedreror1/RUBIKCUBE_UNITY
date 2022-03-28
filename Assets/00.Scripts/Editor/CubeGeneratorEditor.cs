@@ -25,11 +25,11 @@ namespace PEDREROR1.RUBIK.Editor
                 GUILayout.Label(slice.name);
                 if (GUILayout.Button("Rotate CW"))
                 {
-                    slice.Rotate(1);
+                    slice.TryRotate(1);
                 }
                 if (GUILayout.Button("Rotate CCW"))
                 {
-                    slice.Rotate(-1);
+                    slice.TryRotate(-1);
                 }
                 if (GUILayout.Button("TestParent"))
                 {

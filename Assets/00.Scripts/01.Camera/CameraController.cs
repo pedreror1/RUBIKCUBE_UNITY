@@ -1,3 +1,4 @@
+using PEDREROR1.RUBIK.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,31 +15,32 @@ namespace PEDREROR1.RUBIK
     [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
+        enum CameraState
+        {
+            Idle=0,
+            RotatingCamera=1,
+            ZoomingCamera=2,
+            Animating=3,
+            WaitingForFLick=4
+        }
+        CameraState currentCameraState;
+        
         private Camera _camera;
 
         private Vector3 target;
-      
 
-        bool MovingCamera = false;
+        Vector3 selectedCubletNormal;
+
 
         private Transform _transform;
 
         private float cameraDistance = 5;
+        public Vector2 CameraZoomRange = new Vector2(3f, 15f);      
 
-        public float RotationSpeed = 0.1f;
-        public float deadZone = 0.25f;
-        // Update is called once per frame
+        public LayerMask CubletMask; 
 
-        private Vector3 mousePosition, mousePreviousPosition;
-        public Vector3 mousePositionDelta;
-
-        public Vector2 CameraZoomRange = new Vector2(3f, 15f);
-        //TODO move to CUbe controller
-        [SerializeField] CubeGenerator cubeGenerator;
-
-        public float minRotationMagnitude = 0.5f;
-
-        public LayerMask CubletMask;
+        Vector2 orbitAngles = new Vector2(0, 0f);
+        public void UpdateState(int newState) => currentCameraState = (CameraState)newState;
 
         private void Awake()
         {
@@ -48,75 +50,48 @@ namespace PEDREROR1.RUBIK
         {
             _transform = transform;
             _camera = GetComponent<Camera>();
-            target = cubeGenerator ? cubeGenerator.getCenter : Vector3.zero;
+            target = PlayerManager.Instance.getCenter;
             cameraDistance = PlayerManager.Instance.dimension ;
-
-            CameraZoomRange = cubeGenerator ? new Vector2(PlayerManager.Instance.dimension * 1.5f,PlayerManager.Instance.dimension * 3f) : CameraZoomRange;
+            CameraZoomRange = new Vector2(PlayerManager.Instance.dimension * 1.5f,PlayerManager.Instance.dimension * 3f);
             _camera.orthographicSize = CameraZoomRange.x;
             _transform.position = target - _transform.forward * cameraDistance;
             CalculateZoom();
         }
-        void Update()
+        public Vector2 GetOrientedDirection(float yRotation, Vector2 mousePositionDelta, Vector3 normal)
         {
-            if (PlayerManager.Instance.currentState != PlayerManager.GameState.Playing) return;
-            if (Input.GetMouseButton(0))
+            if(Mathf.Round(normal.y)!=1f)
             {
-
-                if (!PlayerManager.Instance.hasCublet && !CheckCollision())
-                {
-                    MovingCamera = true;
-                    CalculateCameraRotationInput();
-                   
-                }
-                if (!MovingCamera && PlayerManager.Instance.hasCublet)
-                {
-                    CalculateFlickDirection();
-                }
+                return mousePositionDelta;
+            }
+            switch(yRotation)
+            {
+                case 0:
+                case 360:
+                    print(mousePositionDelta+" / " +mousePositionDelta.NegY());
+                    return mousePositionDelta.NegY();
+                case 90:
+                    return mousePositionDelta.invertVector();
+                case 180:
+                    return mousePositionDelta.NegX();
+                case 270:
+                    return mousePositionDelta.invertVector().NegXY();
 
             }
-            if (Input.GetMouseButtonUp(0))
-            {
-                MovingCamera = false;
-                PlayerManager.Instance.RemoveCurrentCublet();
-            }
-            CalculateZoom();
+            return mousePositionDelta;
         }
 
-
-
-        private void CalculateFlickDirection()
+        public bool CalculateFlickDirection(Vector3 mousePositionDelta )
         {
-
-            mousePosition = _camera.ScreenToViewportPoint(Input.mousePosition);
-            mousePositionDelta = Vector3.ClampMagnitude(mousePreviousPosition - mousePosition, 1f);
-
-            if (mousePositionDelta.magnitude > minRotationMagnitude)
-            {
-                PlayerManager.Instance.TryRotate(mousePositionDelta);
-            }
+                var currentCameraAngle=((transform.rotation.eulerAngles.y%360 +360)%360);
+                currentCameraAngle=Mathf.Round(currentCameraAngle / 90) * 90;               
+                PlayerManager.Instance.TryRotate(GetOrientedDirection(currentCameraAngle,mousePositionDelta,selectedCubletNormal));
+                return false;
+            
         }
-        Vector2 orbitAngles = new Vector2(0, 0f);
-
-        public void CalculateCameraRotationInput()
+        public Vector3 getScreenToViewPort(Vector2 mousePosition)
         {
-            if (Input.touchCount < 2)
-            {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    mousePreviousPosition = Vector3.ClampMagnitude(_camera.ScreenToViewportPoint(Input.mousePosition), 1f);
-                }
-
-                if (Input.GetMouseButton(0))
-                {
-                    mousePosition = Vector3.ClampMagnitude(_camera.ScreenToViewportPoint(Input.mousePosition), 1f);
-                    mousePositionDelta = mousePreviousPosition - mousePosition;
-
-
-
-                    Rotate(((Vector2)(mousePositionDelta)).InvertVector());
-                }
-            }
-        }
+            return Vector3.ClampMagnitude(_camera.ScreenToViewportPoint(Input.mousePosition), 1f);
+        }       
 
         public void Rotate(Vector2 offset)
         {
@@ -127,75 +102,36 @@ namespace PEDREROR1.RUBIK
             Vector3 lookPosition = target - lookDirection * cameraDistance;
             _transform.SetPositionAndRotation(lookPosition, lookRotatipn);
         }
-        public Vector2 pos1, pos2, pos1Delta, pos2Delta;
-        public float dist1, pinchZoom;
-        public float touchSensitivity = 0.1f;
+      
         //TODO implement pinch in/out
-        public void CalculateZoom(float extraZoom=0)
+        public void CalculateZoom(float touchZoom=0, float MouseZoom=0, float extraZoom=0)
         {
             
-                if (Input.touchCount >= 2)
-                {
-                    var Touch0 = Input.GetTouch(0);
-                    var Touch1 = Input.GetTouch(1);
-
-                    if (Touch0.phase == TouchPhase.Began || Touch1.phase == TouchPhase.Began)
-                    {
-                        pos1 = Touch0.position;
-                        pos2 = Touch1.position;
-                        dist1 = Vector2.Distance(pos1, pos2);
-                    }
-
-
-                    if (Touch0.phase == TouchPhase.Moved || Touch1.phase == TouchPhase.Moved)
-                    {
-                        pos1Delta = pos1 + Touch0.deltaPosition;
-                        pos2Delta = pos2 + Touch1.deltaPosition;
-                        pinchZoom = PlayerManager.Instance.currentState== PlayerManager.GameState.Playing? Vector2.Distance(pos1Delta, pos2Delta)-dist1:0;
-                        print(pinchZoom);
-                        
-
-                    }
-                 
-
-
-
-
-
-            }
-            cameraDistance = Mathf.Clamp(cameraDistance - ((pinchZoom * touchSensitivity) + Input.mouseScrollDelta.y + extraZoom), CameraZoomRange.x, CameraZoomRange.y);
+               
+            cameraDistance = Mathf.Clamp(cameraDistance - (touchZoom + MouseZoom + extraZoom), CameraZoomRange.x, CameraZoomRange.y);
             _camera.orthographicSize = cameraDistance;
 
         }
-     
 
-        public bool CheckCollision()
+        
+        public bool tryGetCublet()
         {
-            if (MovingCamera) return false;
-           
+            if (currentCameraState== CameraState.RotatingCamera) return false;
+            
             Vector3 mousePosition3D = Input.mousePosition;
             mousePosition3D.z = 10;
             Ray camRay = _camera.ScreenPointToRay(mousePosition3D);
             RaycastHit hit;
             if (Physics.Raycast(camRay, out hit,10f,CubletMask))
             {
-                //Debug.Log($"{hit.transform.name} normal {hit.normal} ");
-                if (!PlayerManager.Instance.hasCublet)
-                    PlayerManager.Instance.UpdateCurrentCublet(hit);
-                mousePreviousPosition = Vector3.ClampMagnitude(_camera.ScreenToViewportPoint(Input.mousePosition), 1f);
-                
+                PlayerManager.Instance.UpdateCurrentCublet(hit);
+                selectedCubletNormal = hit.normal;               
                 return true;
             }
             else
             {
-
                 return false;
             }
-
-
-
-
-
         }
     }
 }

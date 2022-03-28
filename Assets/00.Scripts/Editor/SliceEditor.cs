@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace PEDREROR1.RUBIK.Editor
 { 
+    /// <summary>
+    /// Custom Editor with Test Buttons for the Slice Game Component
+    /// </summary>
 [CustomEditor(typeof(Slice))]
 public class SliceEditor : UnityEditor.Editor
 {
@@ -14,11 +17,11 @@ public class SliceEditor : UnityEditor.Editor
         DrawDefaultInspector();
         if(GUILayout.Button("RotateCW"))
         {
-            Target.Rotate(1);
+            Target.TryRotate(1);
         }
             if (GUILayout.Button("RotateCW"))
             {
-                Target.Rotate(-1);
+                Target.TryRotate(-1);
             }
 
             if (GUILayout.Button("TestParent"))
@@ -31,14 +34,7 @@ public class SliceEditor : UnityEditor.Editor
                 Target.CheckFace();
 
             }
-            GUILayout.Label(Target.cublets.Count.ToString());
-            foreach (var c in Target.cublets)
-            {
-                c.cublet= (Cublet) EditorGUILayout.ObjectField("cublet", c.cublet, typeof(Cublet));
-                GUILayout.Label("Original pos="+c.originalPosition.ToString());
-                GUILayout.Label("current pos=" + c.cublet.currentPosition.ToString());
-
-            }
+             
 
     }
 }

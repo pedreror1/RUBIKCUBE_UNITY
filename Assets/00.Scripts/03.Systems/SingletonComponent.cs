@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace PEDREROR1.RUBIK.Utilities
 {
+    /// <summary>
+    /// Utility Class for creating Singletons of Any kind of Monobehaviour based Class
+    /// </summary>
+    /// <typeparam name="T">Class Type</typeparam>
     public class SingletonComponent<T> :  MonoBehaviour where T : MonoBehaviour
     {
         private static T _instance;

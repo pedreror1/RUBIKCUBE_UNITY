@@ -1,3 +1,4 @@
+using PEDREROR1.RUBIK.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,42 +6,31 @@ using UnityEngine;
 
 namespace PEDREROR1.RUBIK
 {
+    /// <summary>
+    /// The Cublet Class serves as a Container for each of the Cublets in the Rubik Cube
+    /// itÅLs used as a bridge for comunicating from the Player Manager To the Slices 
+    /// To rotate The Correct Slice Depending on the Flick Direction
+    /// </summary>
     public class Cublet : MonoBehaviour
     {
-        // Start is called before the first frame update
+#region PARAMETERS
+        public Vector3 Originalposition { get; set; }
+        public Vector3 currentPosition { get; set; }
 
-        public Vector3 Originalposition, currentPosition;
-
-        Transform _transform;
-        GameObject _gameObject;
-
-        [SerializeField]
         private Slice xRotSlice, yRotSlice, zRotSlice;
-        
-        public void UpdateSlices(Slice newSlice )
+        #endregion
+
+#region METHODS
+        public void UpdateSlices(Slice newSlice, Vector3 rotationAngle)
         {
-            if (newSlice.RotationAngle.x != 0)
+            if (rotationAngle.x != 0)
                 xRotSlice = newSlice;
-            else if (newSlice.RotationAngle.y != 0)
+            else if (rotationAngle.y != 0)
                 yRotSlice = newSlice;
-            if (newSlice.RotationAngle.z != 0)
+            if (rotationAngle.z != 0)
                 zRotSlice = newSlice;
-
-            
         }
 
-       
-
-        private void Awake()
-        {
-            _transform = transform;
-            _gameObject = gameObject;
-        }
-
-        private void OnMouseDown()
-        {
-
-        }
         public void setPositionAndName(Vector3 position)
         {
             this.Originalposition = position;
@@ -49,178 +39,132 @@ namespace PEDREROR1.RUBIK
         }
         public void DestroyCublet()
         {
-            Destroy(_gameObject);
+            Destroy(gameObject);
         }
         public void setParent(Transform parent)
         {
-            if (_transform)
+            if (transform)
             {
-                _transform.SetParent(parent);
+                transform.SetParent(parent);
             }
         }
 
-        public KeyValuePair<Slice,int> Rotate(Vector3 Direction, Vector3 Face)
+        public KeyValuePair<Slice, int> Rotate(Vector3 Direction, Vector3 Face)
         {
-
-            Debug.Log($"Cublet{name} direction {Direction} Face{Face} ");
             //Cubes left Side
-            if(Face.CeilToInt() == new Vector3(-1,0,0))
+            if (Face.RoundToInt() == new Vector3(-1, 0, 0))
             {
-                if(Mathf.Abs(Direction.x)> Mathf.Abs(Direction.y))
+                if (Mathf.Abs(Direction.x) > Mathf.Abs(Direction.y))
                 {
-                    if(yRotSlice)
+                    if (yRotSlice)
                     {
-                        var rotationDirection = Direction.x > 0 ? 1 : -1;
-                        return yRotSlice.Rotate(rotationDirection);
-                        
+                        return yRotSlice.TryRotate(Direction.x > 0 ? 1 : -1);
                     }
                 }
                 else
                 {
                     if (zRotSlice)
                     {
-                        var rotationDirection = Direction.y > 0 ? 1 : -1;
-                        return zRotSlice.Rotate(rotationDirection);
-                     }
+                        return zRotSlice.TryRotate(Direction.y > 0 ? 1 : -1);
+                    }
                 }
             }
             //Cubes right Side
-            if (Face.CeilToInt() == new Vector3(1, 0, 0))
+            if (Face.RoundToInt() == new Vector3(1, 0, 0))
             {
                 if (Mathf.Abs(Direction.x) > Mathf.Abs(Direction.y))
                 {
                     if (yRotSlice)
                     {
-                        var rotationDirection = Direction.x > 0 ? 1 : -1;
-                        return yRotSlice.Rotate(rotationDirection);
-                     }
+                        return yRotSlice.TryRotate(Direction.x > 0 ? 1 : -1);
+                    }
                 }
                 else
                 {
                     if (zRotSlice)
                     {
-                        
-                        var rotationDirection = Direction.y > 0 ? -1 : 1;
-                        return zRotSlice.Rotate(rotationDirection);
-                     }
+                        return zRotSlice.TryRotate(Direction.y > 0 ? -1 : 1);
+                    }
                 }
             }
 
             //Cubes Top Side
-            if (Face.CeilToInt() == new Vector3(0, 1, 0))
+            if (Face.RoundToInt() == new Vector3(0, 1, 0))
             {
 
                 if (Mathf.Abs(Direction.x) > Mathf.Abs(Direction.y))
                 {
                     if (zRotSlice)
                     {
-                        
-
-                        var rotationDirection = Direction.x > 0 ? 1 : -1;
-                        return zRotSlice.Rotate(rotationDirection);
-                         
+                        return zRotSlice.TryRotate(Direction.x > 0 ? 1 : -1);
                     }
                 }
                 else
                 {
                     if (xRotSlice)
                     {
-
-                        
-
-                        var rotationDirection = Direction.y > 0 ? 1 : -1;
-                        return xRotSlice.Rotate(rotationDirection);
-                         
+                        return xRotSlice.TryRotate(Direction.y > 0 ? 1 : -1);
                     }
                 }
             }
             //Cubes bottom Side
-            if (Face.CeilToInt() == new Vector3(0, -1, 0))
+            if (Face.RoundToInt() == new Vector3(0, -1, 0))
             {
                 if (Mathf.Abs(Direction.x) > Mathf.Abs(Direction.y))
                 {
                     if (zRotSlice)
                     {
-                      
-
-                        var rotationDirection = Direction.x > 0 ? -1 : 1;
-                        return zRotSlice.Rotate(rotationDirection);
-                        
+                        return zRotSlice.TryRotate(Direction.x > 0 ? -1 : 1);
                     }
                 }
                 else
                 {
                     if (xRotSlice)
                     {
- 
-                        var rotationDirection = Direction.y > 0 ? 1 : -1;
-                        return xRotSlice.Rotate(rotationDirection);
-                         
+                        return xRotSlice.TryRotate(Direction.y > 0 ? 1 : -1);
                     }
-                   
                 }
             }
 
             //Cubes front Side
-            if (Face.CeilToInt() == new Vector3(0, 0,-1))
+            if (Face.RoundToInt() == new Vector3(0, 0, -1))
             {
                 if (Mathf.Abs(Direction.x) > Mathf.Abs(Direction.y))
                 {
                     if (yRotSlice)
                     {
- 
-                        var rotationDirection = Direction.x > 0 ? 1 : -1;
-                        return yRotSlice.Rotate(rotationDirection);
-                         
+                        return yRotSlice.TryRotate(Direction.x > 0 ? 1 : -1);
                     }
                 }
                 else
                 {
                     if (xRotSlice)
                     {
-                        
-
-                        var rotationDirection = Direction.y > 0 ? -1 : 1;
-                        return xRotSlice.Rotate(rotationDirection);
-                         
+                        return xRotSlice.TryRotate(Direction.y > 0 ? -1 : 1);
                     }
-                    
                 }
             }
             //Cubes back Side
-            if (Face.CeilToInt() == new Vector3(0, 0, 1))
+            if (Face.RoundToInt() == new Vector3(0, 0, 1))
             {
                 if (Mathf.Abs(Direction.x) > Mathf.Abs(Direction.y))
                 {
                     if (yRotSlice)
                     {
-                        var rotationDirection = Direction.x > 0 ? 1 : -1;
-                        return yRotSlice.Rotate(rotationDirection);
-                        
+                        return yRotSlice.TryRotate(Direction.x > 0 ? 1 : -1);
                     }
                 }
                 else
                 {
                     if (xRotSlice)
                     {
-                        var rotationDirection = Direction.y > 0 ? 1 : -1;
-                        return xRotSlice.Rotate(rotationDirection);
-                         
+                        return xRotSlice.TryRotate(Direction.y > 0 ? 1 : -1);
                     }
                 }
             }
 
-            return new KeyValuePair<Slice, int>(null,0);
+            return new KeyValuePair<Slice, int>(null, 0);
         }
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
+        #endregion
     }
 }

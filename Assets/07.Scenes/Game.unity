@@ -211,8 +211,9 @@ GameObject:
   - component: {fileID: 162767655}
   - component: {fileID: 162767654}
   - component: {fileID: 162767658}
+  - component: {fileID: 162767659}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: --Main Camera--
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -309,11 +310,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 162767653}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.8513112, y: -0.1791752, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1805443791}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &162767658
@@ -328,22 +329,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e277aa7b1de0c9948b15db9294a0453c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RotationSpeed: 1
-  deadZone: 0.2
-  mousePositionDelta: {x: 0, y: 0, z: 0}
   CameraZoomRange: {x: 3, y: 15}
-  cubeGenerator: {fileID: 1884778761}
-  minRotationMagnitude: 0.1
   CubletMask:
     serializedVersion: 2
     m_Bits: 8
-  pos1: {x: 0, y: 0}
-  pos2: {x: 0, y: 0}
-  pos1Delta: {x: 0, y: 0}
-  pos2Delta: {x: 0, y: 0}
-  dist1: 0
-  pinchZoom: 0
-  touchSensitivity: 0.1
+--- !u!114 &162767659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162767653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42f5c392b7d7c8d41b9b2bd82dd48c89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  touchSensitivity: 0.025
+  minRotationDistance: 0.1
+  cameraController: {fileID: 162767658}
+  RotationSpeed: 0.1
+  deadZone: 0.25
 --- !u!1 &183590751
 GameObject:
   m_ObjectHideFlags: 0
@@ -1096,7 +1102,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &535194226
 GameObject:
@@ -2835,7 +2841,7 @@ GameObject:
   - component: {fileID: 1264586409}
   - component: {fileID: 1264586410}
   m_Layer: 0
-  m_Name: PlayerManager_Singleton
+  m_Name: --PlayerManager_Singleton--
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2853,6 +2859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6926fd52c8750fd4c8ee51b182432ba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DEBUG: 0
   cubeGenerator: {fileID: 1884778761}
   currentState: 0
   dimension: 3
@@ -2861,6 +2868,7 @@ MonoBehaviour:
   gameTime: 0
   animationSpeed: 1
   _camera: {fileID: 162767658}
+  ShuffleAmmount: {x: 5, y: 6}
   shuffleOnStart: 1
 --- !u!4 &1264586408
 Transform:
@@ -2874,7 +2882,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1805443791}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1264586409
 MonoBehaviour:
@@ -4026,11 +4034,12 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 162767657}
   - {fileID: 1264586408}
   - {fileID: 1884778760}
   - {fileID: 1972409504}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1808223960
 GameObject:
@@ -4217,7 +4226,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1805443791}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1884778761
 MonoBehaviour:
@@ -4265,7 +4274,7 @@ Transform:
   - {fileID: 1189868194}
   - {fileID: 1728564799}
   m_Father: {fileID: 1805443791}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1972409505
 MonoBehaviour:
