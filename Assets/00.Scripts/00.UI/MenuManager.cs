@@ -221,7 +221,7 @@ namespace PEDREROR1.RUBIK.UI
         }
         void UpdateTimer()
         {
-            if(PlayerManager.Instance.isPlaying && inGameTimer)
+            if(inGameTimer)
             {
                 var formattedTime= System.TimeSpan.FromSeconds(Mathf.Max(0, PlayerManager.Instance.gameTime));
                 inGameTimer.text = string.Format("{0:D2}:{1:D2}:{2:D2}",formattedTime.Hours,formattedTime.Minutes,formattedTime.Seconds);

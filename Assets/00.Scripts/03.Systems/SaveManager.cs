@@ -11,18 +11,15 @@ namespace PEDREROR1.RUBIK.Utilities
         // public Vector3[,,] cubletscurrentPosition;
         public Stack<KeyValuePair<int, int>> movements = new Stack<KeyValuePair<int, int>>();
         public int dimensions;
-        public SaveData(Stack<KeyValuePair<int, int>> movements, int dimensions)
+        public float timer;
+        public SaveData(Stack<KeyValuePair<int, int>> movements, int dimensions, float timer)
         {
             this.movements = movements;
             this.dimensions = dimensions;
+            this.timer = timer;
         }
 
-        /*public SaveData(Vector3[,,] cubletsOriginalPosition, Vector3[,,] cubletscurrentPosition, Queue<KeyValuePair<Slice, int>> movements)
-        {
-            this.cubletsOriginalPosition = cubletsOriginalPosition;
-            this.cubletscurrentPosition = cubletscurrentPosition;
-            this.movements = movements;
-        }*/
+
     }
     public class SaveManager : MonoBehaviour
     {
@@ -30,27 +27,8 @@ namespace PEDREROR1.RUBIK.Utilities
       
 
 
-        public void Save(Stack<KeyValuePair<Slice, int>> movements, int dimensions)
+        public void Save(Stack<KeyValuePair<Slice, int>> movements, int dimensions,float timer)
         {
-
-            /* string Data = "Cublets {";
-             for (int x = 0; x < dimension; x++)
-             {
-                 for (int y = 0; y < dimension; y++)
-                 {
-                     for (int z = 0; z < dimension; z++)
-                     {
-                         if (x == 0 || y == 0 || z == 0 || x == PlayerManager.Instance.dimension - 1 || y == PlayerManager.Instance.dimension - 1 || z == PlayerManager.Instance.dimension - 1)
-                         {
-                             if (cublets[x,y,z] != null)
-                                 Data += $"{cublets[x, y, z].Originalposition}_{cublets[x, y, z].currentPosition}/";
-                             else
-                                 Data += $"/";
-                         }
-                     }
-                 }
-             }*/
-
             string Data= "Movements {";
             while (movements.Count > 0)
             {
@@ -63,9 +41,10 @@ namespace PEDREROR1.RUBIK.Utilities
             }
             Data += "}";
             Data +="Size {"+dimensions+"}";
+            Data += "Timer {" + timer+ "}";
 
-            
-             if (!Directory.Exists(Application.dataPath + "/SaveData"))
+
+            if (!Directory.Exists(Application.dataPath + "/SaveData"))
             {
                 Directory.CreateDirectory(Application.dataPath + "/SaveData");
             }
@@ -79,7 +58,7 @@ namespace PEDREROR1.RUBIK.Utilities
             {
                 var jsonData=  File.ReadAllText(Application.dataPath + "/SaveData/data.json");
                 var dataSegments = jsonData.Split('}');
-                if(dataSegments.Length==3)
+                if(dataSegments.Length==4)
                 {
                     //Movements
                     var MovementData= dataSegments[0].Split('{');
@@ -98,11 +77,13 @@ namespace PEDREROR1.RUBIK.Utilities
                         
                     }
                     //Dimension
-                    int size = -1;
+                    int size = 3;
+                    float timer = 0;
                     var x = dataSegments[1].Replace("Size {", "");
-                    if (int.TryParse(x,out size))
+                    var y = dataSegments[2].Replace("Timer {", "");
+                    if (int.TryParse(x, out size) && float.TryParse(y, out timer))
                     {
-                        return new SaveData(movementList, size);
+                        return new SaveData(movementList, size,timer);
                     }
 
 

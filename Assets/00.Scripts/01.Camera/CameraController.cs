@@ -97,21 +97,24 @@ namespace PEDREROR1.RUBIK
         }
         Vector2 orbitAngles = new Vector2(0, 0f);
 
-        public void CalculateCameraRotationInput( )
+        public void CalculateCameraRotationInput()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.touchCount < 2)
             {
-                mousePreviousPosition = Vector3.ClampMagnitude(_camera.ScreenToViewportPoint(Input.mousePosition), 1f);
-            }
-            
-            if (Input.GetMouseButton(0))
-            {
-                mousePosition= Vector3.ClampMagnitude(_camera.ScreenToViewportPoint(Input.mousePosition), 1f);
-                mousePositionDelta = mousePreviousPosition - mousePosition;
+                if (Input.GetMouseButtonDown(0))
+                {
+                    mousePreviousPosition = Vector3.ClampMagnitude(_camera.ScreenToViewportPoint(Input.mousePosition), 1f);
+                }
+
+                if (Input.GetMouseButton(0))
+                {
+                    mousePosition = Vector3.ClampMagnitude(_camera.ScreenToViewportPoint(Input.mousePosition), 1f);
+                    mousePositionDelta = mousePreviousPosition - mousePosition;
 
 
 
-                Rotate(((Vector2)(mousePositionDelta)).InvertVector() );
+                    Rotate(((Vector2)(mousePositionDelta)).InvertVector());
+                }
             }
         }
 
@@ -148,20 +151,21 @@ namespace PEDREROR1.RUBIK
                     {
                         pos1Delta = pos1 + Touch0.deltaPosition;
                         pos2Delta = pos2 + Touch1.deltaPosition;
-                        pinchZoom = Vector2.Distance(pos1Delta, pos2Delta)-dist1;
+                        pinchZoom = PlayerManager.Instance.currentState== PlayerManager.GameState.Playing? Vector2.Distance(pos1Delta, pos2Delta)-dist1:0;
                         print(pinchZoom);
                         
 
                     }
-                    cameraDistance = Mathf.Clamp(cameraDistance - ((pinchZoom * touchSensitivity) + Input.mouseScrollDelta.y + extraZoom), CameraZoomRange.x, CameraZoomRange.y);
-                    _camera.orthographicSize = cameraDistance;
+                 
 
 
 
 
 
             }
-         
+            cameraDistance = Mathf.Clamp(cameraDistance - ((pinchZoom * touchSensitivity) + Input.mouseScrollDelta.y + extraZoom), CameraZoomRange.x, CameraZoomRange.y);
+            _camera.orthographicSize = cameraDistance;
+
         }
      
 

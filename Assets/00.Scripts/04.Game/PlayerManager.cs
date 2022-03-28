@@ -51,17 +51,15 @@ namespace PEDREROR1.RUBIK
         {
             currentState = newState;
             if (currentState == GameState.Playing)
-            {
-                gameTime--;
-                CO_Timer = StartCoroutine(Timer_CO());
-
+            {                
+                if (CO_Timer == null)
+                {
+                    CO_Timer = StartCoroutine(Timer_CO());
+                }
             }
             else
             {
-                if (CO_Timer != null)
-                {
-                    StopCoroutine(CO_Timer);
-                }
+                StopTimer();
             }
         }
         public void UpdateState(int newState)
@@ -70,16 +68,16 @@ namespace PEDREROR1.RUBIK
 
             if (currentState == GameState.Playing)
             {
-                gameTime--;
-                CO_Timer = StartCoroutine(Timer_CO());
+                
+                if (CO_Timer == null)
+                {
+                    CO_Timer = StartCoroutine(Timer_CO());
+                }
 
             }
             else
             {
-                if (CO_Timer != null)
-                {
-                    StopCoroutine(CO_Timer);
-                }
+                StopTimer();
             }
         }
 
@@ -93,7 +91,7 @@ namespace PEDREROR1.RUBIK
 
         public int UpdateDimension(int dir)
         {
-            return dimension = Mathf.Min(Mathf.Max(dimension + dir, 3), 6);
+            return dimension = Mathf.Min(Mathf.Max(dimension + dir, 2), 6);
 
         }
 
@@ -171,7 +169,7 @@ namespace PEDREROR1.RUBIK
             if (saveManager)
             {
                 if (MovementList.Count > 0)
-                    saveManager.Save(MovementList, dimension);
+                    saveManager.Save(MovementList, dimension, gameTime);
             }
         }
         public bool shuffleOnStart;
@@ -201,6 +199,7 @@ namespace PEDREROR1.RUBIK
             {
                 if (currentState != GameState.Shuffling)
                 {
+                    gameTime = saveData.timer;
                     dimension = saveData.dimensions;
                     UpdateState(GameState.Shuffling);
                     cubeGenerator.generateCube();
@@ -225,7 +224,7 @@ namespace PEDREROR1.RUBIK
                     }
                 }
                 MenuManager.Instance.playSelectCubeAnimation();
-                UpdateState(GameState.Playing);
+             
                 isAnimating = false;
             }
             else
@@ -250,15 +249,12 @@ namespace PEDREROR1.RUBIK
                 
                 isAnimating = false;
             }
-
+            UpdateState(GameState.Playing);
         }
 
         public void Win()
         {
-            if (CO_Timer != null)
-            {
-                StopCoroutine(CO_Timer);
-            }
+            StopTimer();
             StartCoroutine(WinAnimation());
         }
 
@@ -296,17 +292,40 @@ namespace PEDREROR1.RUBIK
         }
         public void Resume()
         {
-            UpdateState(GameState.Playing);
+            if (currentState == GameState.Pause)
+            {
+                UpdateState(GameState.Playing);
+            }
 
         }
         public void GoBackToMenu()
         {
+            StopTimer(true);
+             
+            UpdateTimerEvnt.Invoke();
             UpdateState(GameState.Menu);
             if (cubeGenerator)
             {
                 cubeGenerator.DestroyCube();
             }
         }
+
+        private void StopTimer(bool reset=false)
+        {
+            if (CO_Timer != null)
+            {
+                StopCoroutine(CO_Timer);
+
+                CO_Timer = null;
+               
+            }
+            if (reset)
+            {
+                gameTime = 0;
+                UpdateTimerEvnt.Invoke();
+            }
+        }
+
         public bool load()
         {
             if (saveManager)
@@ -319,20 +338,18 @@ namespace PEDREROR1.RUBIK
 
         IEnumerator Timer_CO()
         {
-            yield return TimerDelay;
-
-            gameTime++;
-            
-            if (UpdateTimerEvnt != null)
-                UpdateTimerEvnt.Invoke();
-            if (currentState == GameState.Playing)
+            while (currentState == GameState.Playing)
             {
-                CO_Timer = StartCoroutine(Timer_CO());
+                yield return TimerDelay;
+                gameTime++;
+                UpdateTimerEvnt?.Invoke();
+                
             }
         }
 
         public void CheckWinningCondition()
         {
+            if (currentState != GameState.Playing) return;
             foreach (var slice in Slices)
             {
                 if(slice.sliceFaceType!= Slice.FaceType.innerFace)
