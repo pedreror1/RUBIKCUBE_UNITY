@@ -10,8 +10,8 @@ namespace PEDREROR1.RUBIK.UI
     {
         public Button ContinueButton;
         public Text cubeSizeLabel;
-        [SerializeField] private PlayableDirector startAnimation,continueGameAnimation,selectCubeAnimation, showMenuAnimation,hideMenuAnimation, GoToMenuAnimation;
-        
+        [SerializeField] private PlayableDirector startAnimation, continueGameAnimation, selectCubeAnimation, showMenuAnimation, hideMenuAnimation, GoToMenuAnimation;
+
         public Text inGameTimer;
 
         public GameObject DynamicObject1, DynamicObject2, DynamicObject3, TimerToggle;
@@ -19,10 +19,10 @@ namespace PEDREROR1.RUBIK.UI
 
         enum PauseMenuState
         {
-            PauseMenu=0,
-            ConfirmRestart=1,
-            ConfirmExit=2,
-            Save=3
+            PauseMenu = 0,
+            ConfirmRestart = 1,
+            ConfirmExit = 2,
+            Save = 3
         }
         PauseMenuState currentPauseState;
 
@@ -52,7 +52,7 @@ namespace PEDREROR1.RUBIK.UI
 
         public void PlayCubeAnimation()
         {
-            if(selectCubeAnimation)
+            if (selectCubeAnimation)
             {
                 selectCubeAnimation.Play();
             }
@@ -69,7 +69,7 @@ namespace PEDREROR1.RUBIK.UI
             cubeSizeLabel.text = "3x3";
             if (ContinueButton)
             {
-                ContinueButton.interactable=PlayerManager.Instance.load();
+                ContinueButton.interactable = PlayerManager.Instance.load();
             }
             PlayerManager.Instance.UpdateTimerEvnt += UpdateTimer;
             PlayerManager.Instance.ResumeEvnt += Resume;
@@ -105,7 +105,7 @@ namespace PEDREROR1.RUBIK.UI
 
         public void UpdateMenu(int newState)
         {
-            currentPauseState= (PauseMenuState)newState;
+            currentPauseState = (PauseMenuState)newState;
             switch (currentPauseState)
             {
                 case PauseMenuState.PauseMenu:
@@ -122,7 +122,7 @@ namespace PEDREROR1.RUBIK.UI
                     DynamicObject3.SetActive(false);
                     DynamicText1.text = "YES";
                     DynamicText2.text = "CANCEL";
-                    
+
 
 
                     break;
@@ -174,19 +174,18 @@ namespace PEDREROR1.RUBIK.UI
                 case PauseMenuState.PauseMenu:
                     Resume();
                     break;
-              
+
                 case PauseMenuState.ConfirmExit:
                     UpdateMenu(0);
                     break;
                 case PauseMenuState.ConfirmRestart:
-                    if(PlayerManager.Instance.currentState!= PlayerManager.GameState.Shuffling)
+                    if (PlayerManager.Instance.currentState != PlayerManager.GameState.Shuffling)
                         UpdateMenu(0);
                     break;
 
                 case PauseMenuState.Save:
-                   PlayGoToMenuAnimation();
+                    PlayGoToMenuAnimation();
                     PlayerManager.Instance.GoBackToMenu();
-                   
 
                     break;
             }
@@ -199,32 +198,29 @@ namespace PEDREROR1.RUBIK.UI
                 case PauseMenuState.PauseMenu:
                     UpdateMenu(2);
                     break;
-                
+
             }
         }
 
-
-
-
-        public void UpdateCubeSize(int direction )
+        public void UpdateCubeSize(int direction)
         {
             if (direction != 1 && direction != -1) return;
 
-            var dimension= PlayerManager.Instance.UpdateDimension(direction);
+            var dimension = PlayerManager.Instance.UpdateDimension(direction);
             cubeSizeLabel.text = $"{dimension}X{dimension}";
-            
+
         }
-        
+
         public void ToggleTimer(bool isOn)
         {
             inGameTimer.gameObject.SetActive(isOn);
         }
         void UpdateTimer()
         {
-            if(inGameTimer)
+            if (inGameTimer)
             {
-                var formattedTime= System.TimeSpan.FromSeconds(Mathf.Max(0, PlayerManager.Instance.gameTime));
-                inGameTimer.text = string.Format("{0:D2}:{1:D2}:{2:D2}",formattedTime.Hours,formattedTime.Minutes,formattedTime.Seconds);
+                var formattedTime = System.TimeSpan.FromSeconds(Mathf.Max(0, PlayerManager.Instance.gameTime));
+                inGameTimer.text = string.Format("{0:D2}:{1:D2}:{2:D2}", formattedTime.Hours, formattedTime.Minutes, formattedTime.Seconds);
 
             }
         }

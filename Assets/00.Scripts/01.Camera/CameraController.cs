@@ -39,7 +39,7 @@ namespace PEDREROR1.RUBIK
 
         public LayerMask CubletMask; 
 
-        Vector2 orbitAngles = new Vector2(0, 0f);
+        Vector2 CurrentAngle = new Vector2(0, 0f);
         public void UpdateState(int newState) => currentCameraState = (CameraState)newState;
 
         private void Awake()
@@ -91,12 +91,18 @@ namespace PEDREROR1.RUBIK
         public Vector3 getScreenToViewPort(Vector2 mousePosition)
         {
             return Vector3.ClampMagnitude(_camera.ScreenToViewportPoint(Input.mousePosition), 1f);
-        }       
+        }
 
+        public Vector2 maxrotX;
+        
         public void Rotate(Vector2 offset)
         {
-            orbitAngles -= offset;
-            Quaternion lookRotatipn = Quaternion.Euler(orbitAngles);
+            CurrentAngle -=  offset;
+            CurrentAngle.x= Mathf.Clamp(CurrentAngle.x, maxrotX.x, maxrotX.y);
+            if (CurrentAngle.y > 360f) CurrentAngle.y -= 360f;
+            else if (CurrentAngle.y < 0f) CurrentAngle.y += 360f;
+
+            Quaternion lookRotatipn = Quaternion.Euler(CurrentAngle);
 
             Vector3 lookDirection = lookRotatipn * Vector3.forward;
             Vector3 lookPosition = target - lookDirection * cameraDistance;
