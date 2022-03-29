@@ -14,13 +14,13 @@ namespace PEDREROR1.RUBIK.Editor
             var Target = target as CubeGenerator;
             if (GUILayout.Button("GenerateCube"))
             {
-                Target.generateCube();
+                Target.GenerateCube();
             }
             if (GUILayout.Button("Destroy Cube"))
             {
                 Target.DestroyCube();
             }
-            foreach(var slice in PlayerManager.Instance.Slices)
+            foreach(var slice in PlayerManager.Instance.slices)
             {
                 GUILayout.Label(slice.name);
                 if (GUILayout.Button("Rotate CW"))

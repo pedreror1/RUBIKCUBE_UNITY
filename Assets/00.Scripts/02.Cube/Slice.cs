@@ -26,11 +26,9 @@ namespace PEDREROR1.RUBIK
             Down
         }
         public FaceType sliceFaceType;
-
-        private List<CubletData> cublets = new List<CubletData>();
         public Vector3 RotationAngle { get; private set; }
-        
-        
+
+        private List<CubletData> cublets = new List<CubletData>();        
         private LayerMask cubletFaceMask;
         private Vector3 startRotation = Vector3.zero;
         #endregion
@@ -147,7 +145,7 @@ namespace PEDREROR1.RUBIK
             }
             return false;
         }
-        public Vector3 getFaceOffset()
+        private Vector3 getFaceOffset()
         {
             switch (sliceFaceType)
             {
@@ -183,6 +181,7 @@ namespace PEDREROR1.RUBIK
         #region DEBUG
         public void TestParent()
         {
+            if (!PlayerManager.Instance.debug) return;
             foreach (var cublet in cublets)
             {
                 if (cublet.getCubletParent() == transform)
@@ -199,7 +198,7 @@ namespace PEDREROR1.RUBIK
 
         private void OnDrawGizmos()
         {
-            if (!PlayerManager.Instance.DEBUG) return;
+            if (!PlayerManager.Instance.debug) return;
             if (sliceFaceType != FaceType.innerFace)
             {
                 Gizmos.color = Color.red;

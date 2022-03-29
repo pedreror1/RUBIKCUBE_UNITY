@@ -30,25 +30,25 @@ namespace PEDREROR1.RUBIK.Utilities
     {
         public void Save(Stack<KeyValuePair<Slice, int>> movements, int dimensions,float timer)
         {
-            string Data= "Movements {";
+            string data= "Movements {";
             while (movements.Count > 0)
             {
                 var movement = movements.Pop();
                 int sliceIndex = -1;
                 if (int.TryParse(movement.Key.name.Replace("Slice_", ""), out sliceIndex))
                 {
-                    Data += $"({sliceIndex},{movement.Value})/";
+                    data += $"({sliceIndex},{movement.Value})/";
                 }
             }
-            Data += "}";
-            Data +="Size {"+dimensions+"}";
-            Data += "Timer {" + timer+ "}";
+            data += "}";
+            data +="Size {"+dimensions+"}";
+            data += "Timer {" + timer+ "}";
 
             if (!Directory.Exists(Application.dataPath + "/SaveData"))
             {
                 Directory.CreateDirectory(Application.dataPath + "/SaveData");
             }
-            File.WriteAllText(Application.dataPath+"/SaveData/data.json",Data);            
+            File.WriteAllText(Application.dataPath+"/SaveData/data.json",data);            
         }
         public SaveData LoadData()
         {          
@@ -59,12 +59,12 @@ namespace PEDREROR1.RUBIK.Utilities
                 if(dataSegments.Length==4)
                 {
                     //Movements
-                    var MovementData= dataSegments[0].Split('{');
-                    var Movements= MovementData[1].Replace("/}","").Split('/');
+                    var movementData= dataSegments[0].Split('{');
+                    var movements= movementData[1].Replace("/}","").Split('/');
                     Stack<KeyValuePair<int, int>> movementList = new Stack<KeyValuePair<int, int>>();
-                    if (Movements.Length > 0)
+                    if (movements.Length > 0)
                     {
-                        foreach (var movement in Movements)
+                        foreach (var movement in movements)
                         {
                             var movementasVector = movement.ToVector2();
                             if(movementasVector.x!=-1)

@@ -10,23 +10,23 @@ namespace PEDREROR1.RUBIK.Utilities
     /// <typeparam name="T">Class Type</typeparam>
     public class SingletonComponent<T> :  MonoBehaviour where T : MonoBehaviour
     {
-        private static T _instance;
-        public static bool HasInstance => _instance != null;
+        private static T instance;
+       
 
         public static T Instance
         {
             get
             {
-                if (!_instance)
+                if (!instance)
                 {
-                    _instance= FindObjectOfType<T>();
-                    if(!_instance)
+                    instance= FindObjectOfType<T>();
+                    if(!instance)
                     {
-                        _instance = new GameObject($"{typeof(T).Name}_Singleton").AddComponent<T>();
+                        instance = new GameObject($"{typeof(T).Name}_Singleton").AddComponent<T>();
                     }
                 }
 
-                return _instance;
+                return instance;
             }
             private set { }
         }

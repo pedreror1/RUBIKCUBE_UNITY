@@ -15,12 +15,12 @@ namespace PEDREROR1.RUBIK.UI
     {
         #region PARAMETERS
 
-        [SerializeField] private Button ContinueButton;
+        [SerializeField] private Button continueButton;
         [SerializeField] private Text cubeSizeLabel;
         [SerializeField] private PlayableDirector startAnimation, continueGameAnimation, selectCubeAnimation, showMenuAnimation, hideMenuAnimation, GoToMenuAnimation;
         [SerializeField] private Text inGameTimer;
-        [SerializeField] private GameObject DynamicObject1, DynamicObject2, DynamicObject3, TimerToggle;
-        [SerializeField] private Text DescriptionText, DynamicText1, DynamicText2, DynamicText3;
+        [SerializeField] private GameObject dynamicObject1, dynamicObject2, dynamicObject3, timerToggle;
+        [SerializeField] private Text descriptionText, dynamicText1, dynamicText2, dynamicText3;
         private enum PauseMenuState
         {
             PauseMenu = 0,
@@ -96,9 +96,9 @@ namespace PEDREROR1.RUBIK.UI
         void Start()
         {
             cubeSizeLabel.text = "3x3";
-            if (ContinueButton)
+            if (continueButton)
             {
-                ContinueButton.interactable = PlayerManager.Instance.load();
+                continueButton.interactable = PlayerManager.Instance.Load();
             }
             PlayerManager.Instance.UpdateTimerEvnt += UpdateTimer;
             PlayerManager.Instance.ResumeEvnt += Resume;
@@ -113,7 +113,7 @@ namespace PEDREROR1.RUBIK.UI
         {
             UpdateMenu(4);
             PlayShowMenuAnimation();
-        }       
+        }
         public void Resume()
         {
             PlayHideMenuAnimation();
@@ -141,44 +141,44 @@ namespace PEDREROR1.RUBIK.UI
             switch (currentPauseState)
             {
                 case PauseMenuState.PauseMenu:
-                    DescriptionText.text = "SHOW TIMER";
-                    TimerToggle.SetActive(true);
-                    DynamicObject3.SetActive(true);
-                    DynamicText1.text = "RESTART";
-                    DynamicText2.text = "CONTINUE";
-                    DynamicText3.text = "EXIT";
+                    descriptionText.text = "SHOW TIMER";
+                    timerToggle.SetActive(true);
+                    dynamicObject3.SetActive(true);
+                    dynamicText1.text = "RESTART";
+                    dynamicText2.text = "CONTINUE";
+                    dynamicText3.text = "EXIT";
                     break;
 
                 case PauseMenuState.ConfirmRestart:
-                    DescriptionText.text = "ARE YOU SURE YOU WANT TO RESTART?";
-                    TimerToggle.SetActive(false);
-                    DynamicObject3.SetActive(false);
-                    DynamicText1.text = "YES";
-                    DynamicText2.text = "CANCEL";
+                    descriptionText.text = "ARE YOU SURE YOU WANT TO RESTART?";
+                    timerToggle.SetActive(false);
+                    dynamicObject3.SetActive(false);
+                    dynamicText1.text = "YES";
+                    dynamicText2.text = "CANCEL";
                     break;
 
                 case PauseMenuState.ConfirmExit:
-                    DescriptionText.text = "ARE YOU SURE YOU WANT TO EXIT?";
-                    TimerToggle.SetActive(false);
-                    DynamicObject3.SetActive(false);
-                    DynamicText1.text = "YES";
-                    DynamicText2.text = "CANCEL";
+                    descriptionText.text = "ARE YOU SURE YOU WANT TO EXIT?";
+                    timerToggle.SetActive(false);
+                    dynamicObject3.SetActive(false);
+                    dynamicText1.text = "YES";
+                    dynamicText2.text = "CANCEL";
                     break;
 
                 case PauseMenuState.Save:
-                    DescriptionText.text = "SAVE DATA";
-                    TimerToggle.SetActive(false);
-                    DynamicObject3.SetActive(false);
-                    DynamicText1.text = "YES";
-                    DynamicText2.text = "NO";
+                    descriptionText.text = "SAVE DATA";
+                    timerToggle.SetActive(false);
+                    dynamicObject3.SetActive(false);
+                    dynamicText1.text = "YES";
+                    dynamicText2.text = "NO";
                     break;
 
                 case PauseMenuState.Win:
-                    DescriptionText.text = $"CONGRATULATIONS! Cube Completed in {inGameTimer.text}";
-                    TimerToggle.SetActive(false);
-                    DynamicObject3.SetActive(false);
-                    DynamicText1.text = "Exit";
-                    DynamicText2.text = "Continue";
+                    descriptionText.text = $"CONGRATULATIONS! Cube Completed in {inGameTimer.text}";
+                    timerToggle.SetActive(false);
+                    dynamicObject3.SetActive(false);
+                    dynamicText1.text = "Exit";
+                    dynamicText2.text = "Continue";
                     break;
             }
         }
@@ -210,8 +210,8 @@ namespace PEDREROR1.RUBIK.UI
                     break;
                 case PauseMenuState.Save:
                     //Save Data and go to main Menu
-                    PlayerManager.Instance.save();
-                    ContinueButton.interactable = PlayerManager.Instance.load();
+                    PlayerManager.Instance.Save();
+                    continueButton.interactable = PlayerManager.Instance.Load();
                     PlayHideMenuAnimation();
                     PlayerManager.Instance.GoBackToMenu();
                     PlayGoToMenuAnimation();
@@ -241,7 +241,7 @@ namespace PEDREROR1.RUBIK.UI
 
                 case PauseMenuState.ConfirmRestart:
                     //Go Back to main Menu
-                         UpdateMenu(0);
+                    UpdateMenu(0);
                     break;
 
                 case PauseMenuState.Save:
@@ -249,7 +249,7 @@ namespace PEDREROR1.RUBIK.UI
                     PlayGoToMenuAnimation();
                     PlayerManager.Instance.GoBackToMenu();
                     break;
-                
+
                 case PauseMenuState.Win:
                     //Close pause Menu 
                     Resume();
@@ -272,11 +272,8 @@ namespace PEDREROR1.RUBIK.UI
         {
             inGameTimer.gameObject.SetActive(isOn);
         }
-     
-        #endregion
-      
 
-      
+        #endregion
     }
     #endregion
 }

@@ -18,15 +18,15 @@ namespace PEDREROR1.RUBIK.Editor
             GUILayout.Label($"Current State: {PME.currentState}");
 
             DrawDefaultInspector();
-              if(PME.currentState== PlayerManager.GameState.Playing && PME.DEBUG) 
+              if(PME.currentState== PlayerManager.GameState.Playing && PME.debug) 
             {
                 if(GUILayout.Button("Save"))
                 {
-                    PME.save();
+                    PME.Save();
                 }
                 if (GUILayout.Button("load"))
                 {
-                    PME.load();
+                    PME.Load();
                 }
             }
         }      

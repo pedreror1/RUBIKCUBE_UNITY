@@ -24,7 +24,7 @@ namespace PEDREROR1.RUBIK
         [Tooltip("Camera Controller Component")]
         [SerializeField] CameraController cameraController;
         [Tooltip("Rotation Movement Speed")]
-        public float RotationSpeed = 0.1f;
+        public float rotationSpeed = 0.1f;
         [Tooltip("Rotation Movement dead zone")]
         public float deadZone = 0.25f;
 
@@ -32,7 +32,8 @@ namespace PEDREROR1.RUBIK
         private float startZoomDistance, deltaZoomDistance, pinchZoom;
         private Vector3 mousePosition, mousePreviousPosition;
         private Vector3 mousePositionDelta;
-        private bool FlickAvailable = true;
+        private bool flickAvailable = true;
+        private bool isZooming = false;
         #endregion
 
 #region METHODS
@@ -45,30 +46,38 @@ namespace PEDREROR1.RUBIK
         }
         private void Update()
         {
-            if (!PlayerManager.Instance.isPlaying) return;
+            if (PlayerManager.Instance.currentState!=PlayerManager.GameState.Playing) return;
+
             if (Input.GetMouseButtonDown(0))
             {
-                mousePreviousPosition = cameraController.getScreenToViewPort(Input.mousePosition);
+                mousePreviousPosition = cameraController.GetScreenToViewPort(Input.mousePosition);
                 if (!PlayerManager.Instance.hasCublet)
                 {
-                    cameraController.tryGetCublet();
+                    cameraController.TryGetCublet();
                 }
             }
+
+            if (mousePreviousPosition == Vector3.zero) return;
+
             if (Input.GetMouseButton(0))
             {
                 if (!PlayerManager.Instance.hasCublet && Input.touchCount < 2)
                 {
+                    
+                    if(!isZooming)
                     RotationInput();
                     
+                    
+                    
                 }
-                else if (PlayerManager.Instance.hasCublet && FlickAvailable)
+                else if (PlayerManager.Instance.hasCublet && flickAvailable)
                 {
                     FlickInput();
                 }
             }
             if (Input.GetMouseButtonUp(0))
             {
-                FlickAvailable = true;
+                flickAvailable = true;
                 cameraController.UpdateState(0);
                 PlayerManager.Instance.RemoveCurrentCublet();
             }
@@ -76,35 +85,40 @@ namespace PEDREROR1.RUBIK
 
         }
 
+        Vector3 previouseMouseposition;
+        
         private void FlickInput()
         {
             cameraController.UpdateState(4);
-            mousePosition = cameraController.getScreenToViewPort(Input.mousePosition);
+            mousePosition = cameraController.GetScreenToViewPort(Input.mousePosition);
             mousePositionDelta = Vector3.ClampMagnitude(mousePreviousPosition - mousePosition, 1f);
 
             if (mousePositionDelta.magnitude > minRotationDistance)
             {
-                FlickAvailable = cameraController.CalculateFlickDirection(mousePositionDelta);
+                flickAvailable = cameraController.CalculateFlickDirection(mousePositionDelta);
             }
         }
 
         private void RotationInput()
-        {
-            mousePosition = cameraController.getScreenToViewPort(Input.mousePosition);
+        {            
+            mousePosition = cameraController.GetScreenToViewPort(Input.mousePosition);            
             mousePositionDelta = mousePreviousPosition - mousePosition;
-            cameraController.UpdateState(1);
-            cameraController.Rotate(((Vector2)(mousePositionDelta)).InvertVectorNegY());
-        }
+            cameraController.UpdateState(1);           
+            cameraController.Rotate(((Vector2)(mousePositionDelta)).InvertVectorNegY()*rotationSpeed);
+            mousePreviousPosition = mousePosition;
+         }
 
         private void ZoomInput()
         {
             if (Input.touchCount >= 2)
             {
+
                 var Touch0 = Input.GetTouch(0);
                 var Touch1 = Input.GetTouch(1);
 
                 if (Touch0.phase == TouchPhase.Began || Touch1.phase == TouchPhase.Began)
                 {
+                    isZooming = true;
                     touch0StartPosition = Touch0.position;
                     touch1StartPosition = Touch1.position;
                     startZoomDistance = Vector2.Distance(touch0StartPosition, touch1StartPosition);
@@ -117,15 +131,27 @@ namespace PEDREROR1.RUBIK
                     deltaZoomDistance = Vector2.Distance(touch0DeltaPosition, touch1DeltaPosition);
                     pinchZoom = deltaZoomDistance - startZoomDistance;
                 }
+                if (Touch0.phase == TouchPhase.Ended && Touch1.phase == TouchPhase.Ended)
+                {
+                    isZooming = false;
+                }
+
 
             }
+            else if (Input.touchCount == 0)
+            {
+                isZooming = false;
+            }
 
-            if (cameraController && (Input.touchCount >= 2 || Input.mouseScrollDelta.y != 0))
+
+
+                if (cameraController && (Input.touchCount >= 2 || Input.mouseScrollDelta.y != 0))
             {
                 cameraController.UpdateState(2);
                 cameraController.CalculateZoom(pinchZoom * touchSensitivity, Input.mouseScrollDelta.y);
             }
         }
+        
         #endregion
     }
 }

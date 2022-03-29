@@ -15,6 +15,11 @@ namespace PEDREROR1.RUBIK.Utilities
 #region PARAMETERS
         public Vector3 originalPosition;
         private Cublet cublet;
+        public Cublet getCublet() => cublet;
+        public Transform getCubletParent() => cublet ? cublet.transform.parent : null;
+        public Vector3 GetCubletOriginalPosition() => cublet ? cublet.Originalposition : Vector3.zero;
+        public Vector3 GetCubletCurrentPosition() => cublet ? cublet.currentPosition : Vector3.zero;
+
         #endregion
 
 #region METHODS
@@ -36,9 +41,7 @@ namespace PEDREROR1.RUBIK.Utilities
                 cublet.UpdateSlices(newSlice, rotationAngle);
             }
         }
-        public Vector3 GetCubletOriginalPosition() => cublet ? cublet.Originalposition : Vector3.zero;
-        public Vector3 GetCubletCurrentPosition() => cublet ? cublet.currentPosition: Vector3.zero;
-        public void UpdateCubletParent(Transform newParent)
+         public void UpdateCubletParent(Transform newParent)
         {
             cublet.transform.parent = newParent;
         }
@@ -49,8 +52,7 @@ namespace PEDREROR1.RUBIK.Utilities
 
         }
 
-        public Cublet getCublet() => cublet;
-        public Transform getCubletParent() => cublet ? cublet.transform.parent : null;
+       
 #endregion
     }
 }

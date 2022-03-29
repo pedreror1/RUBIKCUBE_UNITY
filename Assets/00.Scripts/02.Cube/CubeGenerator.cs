@@ -14,19 +14,19 @@ namespace PEDREROR1.RUBIK
         [Tooltip("Reference To the Cublet PRefab")]
         public Cublet cublet;
         [Tooltip("DEBUG OPTION")]
-        [SerializeField] bool CreateCubeOnAwake;
+        [SerializeField] bool createCubeOnAwake;
         int currentSlice = 0;
         #endregion
 
 #region METHODS
         private void Awake()
         {
-            if (CreateCubeOnAwake)
+            if (createCubeOnAwake)
             {
-                generateCube();
+                GenerateCube();
             }
         }
-        public void generateCube()
+        public void GenerateCube()
         {
             if (!cublet || !Application.isPlaying || PlayerManager.Instance.cubeMatrix != null) return;
             currentSlice = 0;
@@ -41,7 +41,7 @@ namespace PEDREROR1.RUBIK
             var newSlice = new GameObject($"Slice_{currentSlice}").AddComponent<Slice>();
             newSlice.transform.position = PlayerManager.Instance.GetCenter;
             newSlice.transform.parent = transform;
-            PlayerManager.Instance.Slices.Add(newSlice);
+            PlayerManager.Instance.slices.Add(newSlice);
             return newSlice;
         }
         private void SetupZSlices()
@@ -112,7 +112,7 @@ namespace PEDREROR1.RUBIK
                                 PlayerManager.Instance.cubeMatrix[x, y, z] = Instantiate(cublet, position, Quaternion.identity);
                                 PlayerManager.Instance.cubeMatrix[x, y, z].setPositionAndName(position);
                                 PlayerManager.Instance.cubeMatrix[x, y, z].setParent(transform);
-                                PlayerManager.Instance.Slices[currentSlice].AddCublet(new CubletData(PlayerManager.Instance.cubeMatrix[x, y, z]));
+                                PlayerManager.Instance.slices[currentSlice].AddCublet(new CubletData(PlayerManager.Instance.cubeMatrix[x, y, z]));
                             }
                         }
                     }
@@ -137,12 +137,12 @@ namespace PEDREROR1.RUBIK
                     item.DestroyCublet();
             }
             PlayerManager.Instance.cubeMatrix = null;
-            for (int i = 0; i < PlayerManager.Instance.Slices.Count; i++)
+            for (int i = 0; i < PlayerManager.Instance.slices.Count; i++)
             {
-                PlayerManager.Instance.Slices[i].Destroy();
+                PlayerManager.Instance.slices[i].Destroy();
             }
 
-            PlayerManager.Instance.Slices.Clear();
+            PlayerManager.Instance.slices.Clear();
         }
         #endregion
     }

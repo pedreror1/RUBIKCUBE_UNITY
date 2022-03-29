@@ -329,11 +329,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e277aa7b1de0c9948b15db9294a0453c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraZoomRange: {x: 3, y: 15}
-  CubletMask:
+  cameraZoomRange: {x: 3, y: 15}
+  cubletMask:
     serializedVersion: 2
     m_Bits: 8
-  maxrotX: {x: -89, y: 89}
+  cameraXrotationLimit: {x: 0, y: 89}
 --- !u!114 &162767659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,7 +349,7 @@ MonoBehaviour:
   touchSensitivity: 0.025
   minRotationDistance: 0.1
   cameraController: {fileID: 162767658}
-  RotationSpeed: 0.1
+  rotationSpeed: 100
   deadZone: 0.25
 --- !u!1 &183590751
 GameObject:
@@ -362,7 +362,7 @@ GameObject:
   - component: {fileID: 183590753}
   - component: {fileID: 183590752}
   m_Layer: 0
-  m_Name: GoToMenuAnimation
+  m_Name: DIR_GoToMenuAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -440,7 +440,7 @@ GameObject:
   - component: {fileID: 218220075}
   - component: {fileID: 218220076}
   m_Layer: 0
-  m_Name: ShowPauseMenuAnimation
+  m_Name: DIR_ShowPauseMenuAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -520,7 +520,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -272}
-  m_SizeDelta: {x: 741.93, y: 30}
+  m_SizeDelta: {x: 669, y: 30}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &251329287
 MonoBehaviour:
@@ -773,7 +773,7 @@ GameObject:
   - component: {fileID: 292807628}
   - component: {fileID: 292807629}
   m_Layer: 0
-  m_Name: Toggle
+  m_Name: ShowTimerToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -999,7 +999,7 @@ GameObject:
   - component: {fileID: 337383784}
   - component: {fileID: 337383782}
   m_Layer: 0
-  m_Name: Continue
+  m_Name: ContinueButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1216,7 +1216,7 @@ GameObject:
   - component: {fileID: 535194229}
   - component: {fileID: 535194228}
   m_Layer: 0
-  m_Name: Text
+  m_Name: DynamicText_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1296,7 +1296,7 @@ GameObject:
   - component: {fileID: 567618683}
   - component: {fileID: 567618685}
   m_Layer: 0
-  m_Name: Text
+  m_Name: CubeSizeText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1393,7 +1393,7 @@ GameObject:
   - component: {fileID: 573240943}
   - component: {fileID: 573240944}
   m_Layer: 0
-  m_Name: SelectCubeAnimation
+  m_Name: DIR_SelectCubeAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1686,7 +1686,7 @@ GameObject:
   - component: {fileID: 756507148}
   - component: {fileID: 756507149}
   m_Layer: 0
-  m_Name: Toggle
+  m_Name: ShuffleOnStartToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1787,7 +1787,7 @@ GameObject:
   - component: {fileID: 777311895}
   - component: {fileID: 777311894}
   m_Layer: 0
-  m_Name: RightArrow
+  m_Name: RightArrowButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1938,7 +1938,7 @@ GameObject:
   - component: {fileID: 780533671}
   - component: {fileID: 780533670}
   m_Layer: 0
-  m_Name: Dynamic_Button_2
+  m_Name: DynamicButton_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2151,7 +2151,7 @@ GameObject:
   - component: {fileID: 810659955}
   - component: {fileID: 810659954}
   m_Layer: 0
-  m_Name: Text
+  m_Name: DynamiText_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2677,7 +2677,7 @@ GameObject:
   - component: {fileID: 1178996134}
   - component: {fileID: 1178996133}
   m_Layer: 0
-  m_Name: Dynamic_Button_1
+  m_Name: DynamicButton_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2909,7 +2909,7 @@ GameObject:
   - component: {fileID: 1218103714}
   - component: {fileID: 1218103713}
   m_Layer: 0
-  m_Name: Text
+  m_Name: DynamicText_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2990,7 +2990,7 @@ GameObject:
   - component: {fileID: 1220128318}
   - component: {fileID: 1220128321}
   m_Layer: 0
-  m_Name: Select
+  m_Name: SelectButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3249,17 +3249,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6926fd52c8750fd4c8ee51b182432ba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DEBUG: 0
+  cameraController: {fileID: 162767658}
   cubeGenerator: {fileID: 1884778761}
-  currentState: 0
-  dimension: 3
-  currentCublet: {fileID: 0}
-  Slices: []
-  gameTime: 0
+  shuffleAmmount: {x: 10, y: 100}
   animationSpeed: 1
-  _camera: {fileID: 162767658}
-  ShuffleAmmount: {x: 10, y: 25}
-  shuffleOnStart: 1
+  debug: 0
+  currentState: 0
+  slices: []
 --- !u!4 &1264586408
 Transform:
   m_ObjectHideFlags: 0
@@ -3360,7 +3356,7 @@ GameObject:
   - component: {fileID: 1284621131}
   - component: {fileID: 1284621134}
   m_Layer: 0
-  m_Name: LeftArrow
+  m_Name: LeftArrowButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3643,7 +3639,7 @@ GameObject:
   - component: {fileID: 1332789803}
   - component: {fileID: 1332789802}
   m_Layer: 0
-  m_Name: Dynamic_Button_3
+  m_Name: DynamicButton_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3775,7 +3771,7 @@ GameObject:
   - component: {fileID: 1345121613}
   - component: {fileID: 1345121612}
   m_Layer: 0
-  m_Name: Text
+  m_Name: CubeDimensionText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3952,7 +3948,7 @@ GameObject:
   - component: {fileID: 1365361924}
   - component: {fileID: 1365361925}
   m_Layer: 0
-  m_Name: ContinueAnimation
+  m_Name: DIR_ContinueAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4060,7 +4056,7 @@ GameObject:
   - component: {fileID: 1389258814}
   - component: {fileID: 1389258817}
   m_Layer: 0
-  m_Name: Start
+  m_Name: StartButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4132,7 +4128,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1972409505}
         m_TargetAssemblyTypeName: PEDREROR1.RUBIK.UI.MenuManager, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: PlayStartAnimation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4442,7 +4438,7 @@ GameObject:
   - component: {fileID: 1808223961}
   - component: {fileID: 1808223962}
   m_Layer: 0
-  m_Name: HidePauseMenuAnimation
+  m_Name: DIR_HidePauseMenuAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4503,7 +4499,7 @@ GameObject:
   - component: {fileID: 1834936826}
   - component: {fileID: 1834936828}
   m_Layer: 0
-  m_Name: CubeSize
+  m_Name: CubeSizeImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4631,7 +4627,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cublet: {fileID: 5091238660342778196, guid: 3aff7569d28875241a7be4de11fb3dd4, type: 3}
-  CreateCubeOnAwake: 0
+  createCubeOnAwake: 0
 --- !u!1 &1972409503
 GameObject:
   m_ObjectHideFlags: 0
@@ -4678,7 +4674,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ea6543f45982bb47b0fd3060ffdd0c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ContinueButton: {fileID: 337383784}
+  continueButton: {fileID: 337383784}
   cubeSizeLabel: {fileID: 1345121612}
   startAnimation: {fileID: 1988505045}
   continueGameAnimation: {fileID: 1365361925}
@@ -4687,14 +4683,14 @@ MonoBehaviour:
   hideMenuAnimation: {fileID: 1808223962}
   GoToMenuAnimation: {fileID: 183590752}
   inGameTimer: {fileID: 781700289}
-  DynamicObject1: {fileID: 1178996131}
-  DynamicObject2: {fileID: 780533668}
-  DynamicObject3: {fileID: 1332789800}
-  TimerToggle: {fileID: 292807627}
-  DescriptionText: {fileID: 251329287}
-  DynamicText1: {fileID: 1218103713}
-  DynamicText2: {fileID: 810659954}
-  DynamicText3: {fileID: 535194228}
+  dynamicObject1: {fileID: 1178996131}
+  dynamicObject2: {fileID: 780533668}
+  dynamicObject3: {fileID: 1332789800}
+  timerToggle: {fileID: 292807627}
+  descriptionText: {fileID: 251329287}
+  dynamicText1: {fileID: 1218103713}
+  dynamicText2: {fileID: 810659954}
+  dynamicText3: {fileID: 535194228}
 --- !u!1 &1988505043
 GameObject:
   m_ObjectHideFlags: 0
@@ -4706,7 +4702,7 @@ GameObject:
   - component: {fileID: 1988505044}
   - component: {fileID: 1988505045}
   m_Layer: 0
-  m_Name: StartAnimation
+  m_Name: DIR_StartAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

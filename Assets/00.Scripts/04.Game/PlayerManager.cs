@@ -8,17 +8,21 @@ using PEDREROR1.RUBIK.UI;
 
 namespace PEDREROR1.RUBIK
 {
+    /// <summary>
+    /// The Player Manager Is in charge of the Whole Game Flow Managment
+    /// It also comunnicates between the Input Manager, Cublets Objects and Slice Objects
+    /// </summary>
     [RequireComponent(typeof(SaveManager))]
     public class PlayerManager : SingletonComponent<PlayerManager>
     {
-
+#region PARAMETERS
         [SerializeField]
-        private CameraController _camera;
+        private CameraController cameraController;
         [SerializeField]
         CubeGenerator cubeGenerator;
-        public Vector2 ShuffleAmmount = new Vector2(10, 70);
+        public Vector2 shuffleAmmount = new Vector2(10, 70);
         public float animationSpeed = 1f;
-        public bool DEBUG = false;
+        public bool debug = false;
         public Cublet[,,] cubeMatrix;
         public enum GameState
         {
@@ -27,43 +31,17 @@ namespace PEDREROR1.RUBIK
             Playing = 2,
             Shuffling = 3,
             Ending = 4
-        }        
+        }
         [HideInInspector]
         public GameState currentState;
         [HideInInspector]
-        public List<Slice> Slices = new List<Slice>();
-
-        private bool canRotate;
-        private Cublet currentCublet;
-        private Vector3 currentFace;
-        private float gameTime;
-        private bool shuffleOnStart;
-        private Stack<KeyValuePair<Slice, int>> MovementList = new Stack<KeyValuePair<Slice, int>>();
-
-
-        public bool isPlaying => currentState == GameState.Playing;
-
-        private bool isAnimating { get; set; }
-
-        public SaveManager saveManager { get; private set; }
-
-        Coroutine CO_Timer, CO_WinAnimation, CO_SHUFFLE;
-        WaitForSeconds TimerDelay = new WaitForSeconds(1f);
-
+        public List<Slice> slices = new List<Slice>();
+        public Transform GetCubeTransform => cubeGenerator ? cubeGenerator.transform : null;
         public Action ResumeEvnt, CubeGeneratedEvnt;
         public Action<float> UpdateTimerEvnt;
-
-        public SaveData saveData;
-
-
-
-        public Transform GetCubeTransform => cubeGenerator ? cubeGenerator.transform : null;
-
-
         public int Dimension { get; private set; }
         public bool hasWon { get; set; }
         public bool hasCublet => currentCublet != null;
-
 
         public Vector3 GetCenter
         {
@@ -71,9 +49,20 @@ namespace PEDREROR1.RUBIK
             private set { }
         }
 
-        private bool CheckWiningCondition = true;
-
-        #region METHODS
+        private SaveManager saveManager { get;  set; }
+        private Coroutine CO_Timer, CO_WinAnimation, CO_Shuffle;
+        private WaitForSeconds timerDelay = new WaitForSeconds(1f);
+        private SaveData saveData;
+        private bool canRotate;
+        private Cublet currentCublet;
+        private Vector3 currentFace;
+        private float gameTime;
+        private bool shuffleOnStart;
+        private Stack<KeyValuePair<Slice, int>> movementList = new Stack<KeyValuePair<Slice, int>>();
+        private bool isAnimating;
+        private bool checkWiningCondition = true;
+#endregion
+#region METHODS
 
         #region SETUP
         private void Awake()
@@ -98,7 +87,7 @@ namespace PEDREROR1.RUBIK
         public void UpdateState(GameState newState)
         {
             currentState = newState;
-            if (currentState == GameState.Playing && CheckWiningCondition)
+            if (currentState == GameState.Playing && checkWiningCondition)
             {
                 if (CO_Timer == null)
                 {
@@ -135,7 +124,7 @@ namespace PEDREROR1.RUBIK
                 var newMovement = currentCublet.Rotate(direction, currentFace);
                 if (newMovement.Key != null)
                 {
-                    MovementList.Push(newMovement);
+                    movementList.Push(newMovement);
                 }
             }
         }
@@ -148,17 +137,17 @@ namespace PEDREROR1.RUBIK
 
                 if (newMovement.Key != null)
                 {
-                    MovementList.Push(newMovement);
+                    movementList.Push(newMovement);
                 }
             }
         }
 
         public void TryUndo()
         {
-            if (MovementList.Count > 0 && !isAnimating)
+            if (movementList.Count > 0 && !isAnimating)
             {
                 isAnimating = true;
-                var lastMovement = MovementList.Pop();
+                var lastMovement = movementList.Pop();
                 lastMovement.Key.TryRotate(-lastMovement.Value);
             }
         }
@@ -175,11 +164,11 @@ namespace PEDREROR1.RUBIK
             currentCublet = null;
             canRotate = true;
         }
-         
+
         public void UpdateSlices(Vector3 rotationAngle, Slice changedSlice)
         {
             isAnimating = false;
-            var slicesTOUpdate = Slices.Where(slice => slice.RotationAngle != rotationAngle).ToList();
+            var slicesTOUpdate = slices.Where(slice => slice.RotationAngle != rotationAngle).ToList();
             slicesTOUpdate.ForEach(slice =>
             {
                 slice.updateSlice(changedSlice);
@@ -192,9 +181,9 @@ namespace PEDREROR1.RUBIK
             {
                 foreach (var movement in SD.movements)
                 {
-                    if (movement.Key >= 0 && movement.Key - 1 < Slices.Count)
+                    if (movement.Key >= 0 && movement.Key - 1 < slices.Count)
                     {
-                        TryRotate(Slices[movement.Key], movement.Value, 10);
+                        TryRotate(slices[movement.Key], movement.Value, 10);
                         while (isAnimating)
                         {
                             yield return null;
@@ -206,11 +195,11 @@ namespace PEDREROR1.RUBIK
             }
             else
             {
-                int Rotations = UnityEngine.Random.Range(Mathf.Max((int)ShuffleAmmount.x, 10),
-                                                         Mathf.Min((int)ShuffleAmmount.y, 100));
+                int Rotations = UnityEngine.Random.Range(Mathf.Max((int)shuffleAmmount.x, 10),
+                                                         Mathf.Min((int)shuffleAmmount.y, 100));
                 for (int i = 0; i < Rotations; i++)
                 {
-                    TryRotate(Slices[UnityEngine.Random.Range(0, Slices.Count)], UnityEngine.Random.Range(-100, 100) > 0 ? 1 : -1, 15);
+                    TryRotate(slices[UnityEngine.Random.Range(0, slices.Count)], UnityEngine.Random.Range(-100, 100) > 0 ? 1 : -1, 15);
                     while (isAnimating)
                     {
                         yield return null;
@@ -225,10 +214,10 @@ namespace PEDREROR1.RUBIK
 
                 isAnimating = false;
             }
-            if (Time.time - startTime < 3f)
-                yield return new WaitForSeconds(3 - (Time.time - startTime));
+            if (Time.time - startTime < 2f)
+                yield return new WaitForSeconds(2 - (Time.time - startTime));
 
-            CheckWiningCondition = true;
+            checkWiningCondition = true;
             UpdateState(GameState.Playing);
         }
         private void StopTimer(bool reset = false)
@@ -248,7 +237,7 @@ namespace PEDREROR1.RUBIK
         {
             while (currentState == GameState.Playing)
             {
-                yield return TimerDelay;
+                yield return timerDelay;
                 gameTime++;
                 UpdateTimerEvnt?.Invoke(gameTime);
             }
@@ -258,19 +247,19 @@ namespace PEDREROR1.RUBIK
         public void StartGame()
         {
             hasWon = false;
-            CheckWiningCondition = false;
+            checkWiningCondition = false;
             if (shuffleOnStart)
             {
                 if (currentState != GameState.Shuffling)
                 {
                     UpdateState(GameState.Shuffling);
-                    cubeGenerator.generateCube();
+                    cubeGenerator.GenerateCube();
                     StartCoroutine(Shuffle_CO(null));
                 }
             }
             else
             {
-                cubeGenerator.generateCube();
+                cubeGenerator.GenerateCube();
                 UpdateState(GameState.Playing);
             }
         }
@@ -278,7 +267,7 @@ namespace PEDREROR1.RUBIK
         {
             if (saveData == null)
             {
-                cubeGenerator.generateCube();
+                cubeGenerator.GenerateCube();
                 UpdateState(GameState.Playing);
             }
             else
@@ -288,7 +277,7 @@ namespace PEDREROR1.RUBIK
                     gameTime = saveData.timer;
                     Dimension = saveData.dimensions;
                     UpdateState(GameState.Shuffling);
-                    cubeGenerator.generateCube();
+                    cubeGenerator.GenerateCube();
                     StartCoroutine(Shuffle_CO(saveData));
                 }
             }
@@ -296,7 +285,7 @@ namespace PEDREROR1.RUBIK
 
         public void Win()
         {
-            CheckWiningCondition = true;
+            checkWiningCondition = true;
             StopTimer();
             CO_WinAnimation = StartCoroutine(WinAnimation_CO());
         }
@@ -304,7 +293,7 @@ namespace PEDREROR1.RUBIK
         {
             if (CO_WinAnimation != null)
             {
-                CheckWiningCondition = false;
+                checkWiningCondition = false;
                 StopCoroutine(CO_WinAnimation);
                 UpdateState(GameState.Playing);
             }
@@ -314,13 +303,13 @@ namespace PEDREROR1.RUBIK
             UpdateState(GameState.Ending);
             hasWon = true;
             MenuManager.Instance.OnWin();
-            if (_camera)
+            if (cameraController)
             {
                 while (duration > 0)
                 {
                     yield return new WaitForEndOfFrame();
-                    _camera.Rotate(new Vector2(0, 1f));
-                    _camera.CalculateZoom(extraZoom: -0.1f);
+                    cameraController.Rotate(new Vector2(0, 1f));
+                    cameraController.CalculateZoom(extraZoom: -0.1f);
                     duration -= Time.deltaTime;
                 }
             }
@@ -331,10 +320,10 @@ namespace PEDREROR1.RUBIK
             hasWon = false;
             if (cubeGenerator && currentState != GameState.Shuffling)
             {
-                MovementList.Clear();
+                movementList.Clear();
                 UpdateState(GameState.Shuffling);
                 cubeGenerator.DestroyCube();
-                cubeGenerator.generateCube();
+                cubeGenerator.GenerateCube();
                 StartCoroutine(Shuffle_CO(null, true));
             }
         }
@@ -349,7 +338,7 @@ namespace PEDREROR1.RUBIK
         public void GoBackToMenu()
         {
             StopTimer(true);
-            MovementList.Clear();
+            movementList.Clear();
             UpdateTimerEvnt.Invoke(gameTime);
             UpdateState(GameState.Menu);
             if (cubeGenerator)
@@ -359,8 +348,8 @@ namespace PEDREROR1.RUBIK
         }
         public void CheckWinningCondition()
         {
-            if (currentState != GameState.Playing || !CheckWiningCondition) return;
-            foreach (var slice in Slices)
+            if (currentState != GameState.Playing || !checkWiningCondition) return;
+            foreach (var slice in slices)
             {
                 if (slice.sliceFaceType != Slice.FaceType.innerFace)
                 {
@@ -374,15 +363,15 @@ namespace PEDREROR1.RUBIK
         }
         #endregion
         #region DATA_MANAGMENT
-        public void save()
+        public void Save()
         {
             if (saveManager)
             {
-                if (MovementList.Count > 0)
-                    saveManager.Save(MovementList, Dimension, gameTime);
+                if (movementList.Count > 0)
+                    saveManager.Save(movementList, Dimension, gameTime);
             }
         }
-        public bool load()
+        public bool Load()
         {
             if (saveManager)
             {

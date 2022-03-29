@@ -3,19 +3,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-/// <summary>
-/// The CameraController Class Contains The Implementation To:
-/// *Rotate Around The Cube
-/// *Zoom In and Out from The Cube
-/// *Detect if a Cublet Is Selected
-/// </summary>
+
 namespace PEDREROR1.RUBIK
 {
-
+    /// <summary>
+    /// The CameraController Class Contains The Implementation To:
+    /// *Rotate Around The Cube
+    /// *Zoom In and Out from The Cube
+    /// *Detect if a Cublet Is Selected
+    /// </summary>
     [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
-        enum CameraState
+#region PARAMETERS
+        private enum CameraState
         {
             Idle=0,
             RotatingCamera=1,
@@ -23,40 +24,19 @@ namespace PEDREROR1.RUBIK
             Animating=3,
             WaitingForFLick=4
         }
-        CameraState currentCameraState;
-        
-        private Camera _camera;
-
+        private CameraState currentCameraState;        
+        private Camera cam;
         private Vector3 target;
-
         Vector3 selectedCubletNormal;
-
-
-        private Transform _transform;
-
         private float cameraDistance = 5;
-        public Vector2 CameraZoomRange = new Vector2(3f, 15f);      
+        public Vector2 cameraZoomRange = new Vector2(3f, 15f);      
+        public LayerMask cubletMask;
+        private Vector2 currentAngle = new Vector2(0, 0f);
+        public Vector2 cameraXrotationLimit;
+        #endregion
 
-        public LayerMask CubletMask; 
-
-        Vector2 CurrentAngle = new Vector2(0, 0f);
-        public void UpdateState(int newState) => currentCameraState = (CameraState)newState;
-
-        private void Awake()
-        {
-            PlayerManager.Instance.CubeGeneratedEvnt += setup;
-        }
-        void setup()
-        {
-            _transform = transform;
-            _camera = GetComponent<Camera>();
-            target = PlayerManager.Instance.GetCenter;
-            cameraDistance = PlayerManager.Instance.Dimension ;
-            CameraZoomRange = new Vector2(PlayerManager.Instance.Dimension * 1.5f,PlayerManager.Instance.Dimension * 3f);
-            _camera.orthographicSize = CameraZoomRange.x;
-            _transform.position = target - _transform.forward * cameraDistance;
-            CalculateZoom();
-        }
+#region METHODS
+        public void UpdateState(int newState) => currentCameraState = (CameraState)newState;       
         public Vector2 GetOrientedDirection(float yRotation, Vector2 mousePositionDelta, Vector3 normal)
         {
             if(Mathf.Round(normal.y)!=1f)
@@ -79,7 +59,6 @@ namespace PEDREROR1.RUBIK
             }
             return mousePositionDelta;
         }
-
         public bool CalculateFlickDirection(Vector3 mousePositionDelta )
         {
                 var currentCameraAngle=((transform.rotation.eulerAngles.y%360 +360)%360);
@@ -88,25 +67,20 @@ namespace PEDREROR1.RUBIK
                 return false;
             
         }
-        public Vector3 getScreenToViewPort(Vector2 mousePosition)
+        public Vector3 GetScreenToViewPort(Vector2 mousePosition)
         {
-            return Vector3.ClampMagnitude(_camera.ScreenToViewportPoint(Input.mousePosition), 1f);
+            return Vector3.ClampMagnitude(cam.ScreenToViewportPoint(Input.mousePosition), 1f);
         }
-
-        public Vector2 maxrotX;
-        
         public void Rotate(Vector2 offset)
         {
-            CurrentAngle -=  offset;
-            CurrentAngle.x= Mathf.Clamp(CurrentAngle.x, maxrotX.x, maxrotX.y);
-            if (CurrentAngle.y > 360f) CurrentAngle.y -= 360f;
-            else if (CurrentAngle.y < 0f) CurrentAngle.y += 360f;
-
-            Quaternion lookRotatipn = Quaternion.Euler(CurrentAngle);
-
+            currentAngle -=  offset;
+            currentAngle.x= Mathf.Clamp(currentAngle.x, cameraXrotationLimit.x, cameraXrotationLimit.y);
+            if (currentAngle.y > 360f) currentAngle.y -= 360f;
+            else if (currentAngle.y < 0f) currentAngle.y += 360f;
+            Quaternion lookRotatipn = Quaternion.Euler(currentAngle);
             Vector3 lookDirection = lookRotatipn * Vector3.forward;
             Vector3 lookPosition = target - lookDirection * cameraDistance;
-            _transform.SetPositionAndRotation(lookPosition, lookRotatipn);
+            transform.SetPositionAndRotation(lookPosition, lookRotatipn);
         }
       
         //TODO implement pinch in/out
@@ -114,21 +88,21 @@ namespace PEDREROR1.RUBIK
         {
             
                
-            cameraDistance = Mathf.Clamp(cameraDistance - (touchZoom + MouseZoom + extraZoom), CameraZoomRange.x, CameraZoomRange.y);
-            _camera.orthographicSize = cameraDistance;
+            cameraDistance = Mathf.Clamp(cameraDistance - (touchZoom + MouseZoom + extraZoom), cameraZoomRange.x, cameraZoomRange.y);
+            cam.orthographicSize = cameraDistance;
 
         }
 
         
-        public bool tryGetCublet()
+        public bool TryGetCublet()
         {
             if (currentCameraState== CameraState.RotatingCamera) return false;
             
             Vector3 mousePosition3D = Input.mousePosition;
             mousePosition3D.z = 10;
-            Ray camRay = _camera.ScreenPointToRay(mousePosition3D);
+            Ray camRay = cam.ScreenPointToRay(mousePosition3D);
             RaycastHit hit;
-            if (Physics.Raycast(camRay, out hit,10f,CubletMask))
+            if (Physics.Raycast(camRay, out hit,10f,cubletMask))
             {
                 PlayerManager.Instance.UpdateCurrentCublet(hit);
                 selectedCubletNormal = hit.normal;               
@@ -139,6 +113,23 @@ namespace PEDREROR1.RUBIK
                 return false;
             }
         }
+
+        private void Awake()
+        {
+            PlayerManager.Instance.CubeGeneratedEvnt += Setup;
+        }
+        private void Setup()
+        {
+
+            cam = GetComponent<Camera>();
+            target = PlayerManager.Instance.GetCenter;
+            cameraDistance = PlayerManager.Instance.Dimension;
+            cameraZoomRange = new Vector2(PlayerManager.Instance.Dimension * 1.5f, PlayerManager.Instance.Dimension * 3f);
+            cam.orthographicSize = cameraZoomRange.x;
+            transform.position = target - transform.forward * cameraDistance;
+            CalculateZoom();
+        }
     }
+#endregion
 }
 
