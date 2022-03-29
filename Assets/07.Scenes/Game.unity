@@ -333,7 +333,7 @@ MonoBehaviour:
   cubletMask:
     serializedVersion: 2
     m_Bits: 8
-  cameraXrotationLimit: {x: 0, y: 89}
+  cameraXrotationLimit: {x: -90, y: 89}
 --- !u!114 &162767659
 MonoBehaviour:
   m_ObjectHideFlags: 0

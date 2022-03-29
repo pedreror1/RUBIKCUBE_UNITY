@@ -39,69 +39,73 @@ namespace PEDREROR1.RUBIK
         public void UpdateState(int newState) => currentCameraState = (CameraState)newState;
         public Vector2 GetOrientedDirection(float yRotation, Vector2 mousePositionDelta, Vector3 normal)
         {
-            if (Mathf.Round(normal.y) != 1f)
+            if (Mathf.Round(normal.y) == 0f)
             {
                 return mousePositionDelta;
             }
-
+            var orientedVector = mousePositionDelta;
+            print(yRotation);
             switch (yRotation)
             {
-
                 case 0:
                 case 360:
                     return mousePositionDelta.NegY();
-
-                case 45:
+                case 45://done
                     if (mousePositionDelta.x < 0 && mousePositionDelta.y <= 0)
-                        return new Vector2(mousePositionDelta.x, 0);
+                        orientedVector = new Vector2(mousePositionDelta.x, 0);
                     else if (mousePositionDelta.x < 0 && mousePositionDelta.y >= 0)
-                        return new Vector2(0, mousePositionDelta.x);
+                        orientedVector = new Vector2(0, mousePositionDelta.x);
                     else if (mousePositionDelta.x > 0 && mousePositionDelta.y >= 0)
-                        return new Vector2(mousePositionDelta.x, 0);
+                        orientedVector = new Vector2(mousePositionDelta.x, 0);
                     else //x>0 y<0
-                        return new Vector2(0, mousePositionDelta.x);
+                        orientedVector = new Vector2(0, mousePositionDelta.x);
+                    return normal.y > 0 ? orientedVector : orientedVector.InvertVectorNegX();
 
                 case 90:
-                    return mousePositionDelta.invertVector();
+                    return normal.y > 0 ? mousePositionDelta.InvertVector() : mousePositionDelta.InvertVectorNegXY(); //done
 
                 case 135:
                     if (mousePositionDelta.x < 0 && mousePositionDelta.y <= 0)
-                        return new Vector2(0, mousePositionDelta.x);
+                        orientedVector = new Vector2(0, mousePositionDelta.x);
                     else if (mousePositionDelta.x < 0 && mousePositionDelta.y >= 0)
-                        return new Vector2(-mousePositionDelta.x, 0);
+                        orientedVector = new Vector2(-mousePositionDelta.x, 0);
                     else if (mousePositionDelta.x > 0 && mousePositionDelta.y >= 0)
-                        return new Vector2(0, mousePositionDelta.x);
+                        orientedVector = new Vector2(0, mousePositionDelta.x);
                     else //x>0 y<0
-                        return new Vector2(-mousePositionDelta.x, 0);
+                        orientedVector = new Vector2(-mousePositionDelta.x, 0);
+                    if (normal.y < 0) orientedVector = orientedVector.InvertVectorNegY();
+                    return orientedVector;
 
                 case 180:
                     return mousePositionDelta.NegX();
 
                 case 225:
                     if (mousePositionDelta.x < 0 && mousePositionDelta.y <= 0)
-                        return new Vector2(-mousePositionDelta.x, 0);
+                        orientedVector = new Vector2(-mousePositionDelta.x, 0);
                     else if (mousePositionDelta.x < 0 && mousePositionDelta.y >= 0)
-                        return new Vector2(0, -mousePositionDelta.x);
+                        orientedVector = new Vector2(0, -mousePositionDelta.x);
                     else if (mousePositionDelta.x > 0 && mousePositionDelta.y >= 0)
-                        return new Vector2(-mousePositionDelta.x, 0);
+                        orientedVector = new Vector2(-mousePositionDelta.x, 0);
                     else //x>0 y<0
-                        return new Vector2(0, -mousePositionDelta.x);
+                        orientedVector = new Vector2(0, -mousePositionDelta.x);
+                    if (normal.y < 0) orientedVector = orientedVector.InvertVectorNegX();
+                    return orientedVector;
 
                 case 270:
-                    return mousePositionDelta.invertVector().NegXY();
+                    return normal.y > 0 ? mousePositionDelta.InvertVectorNegXY() : mousePositionDelta.InvertVector();
 
                 case 315:
                     if (mousePositionDelta.x < 0 && mousePositionDelta.y <= 0)
-                        return new Vector2(0, -mousePositionDelta.x);
+                        orientedVector = new Vector2(0, -mousePositionDelta.x);
                     else if (mousePositionDelta.x < 0 && mousePositionDelta.y >= 0)
-                        return new Vector2(mousePositionDelta.x, 0);
+                        orientedVector = new Vector2(mousePositionDelta.x, 0);
                     else if (mousePositionDelta.x > 0 && mousePositionDelta.y >= 0)
-                        return new Vector2(0, -mousePositionDelta.x);
+                        orientedVector = new Vector2(0, -mousePositionDelta.x);
                     else //x<0 y<0
-                        return new Vector2(mousePositionDelta.x, 0);
+                        orientedVector = new Vector2(mousePositionDelta.x, 0);
 
-
-
+                    if (normal.y < 0) orientedVector = orientedVector.InvertVectorNegY();
+                    return orientedVector;
             }
             return mousePositionDelta;
         }

@@ -36,7 +36,11 @@ namespace PEDREROR1.RUBIK.Utilities
         {
             return new Vector2(vec.y, -vec.x);
         }
-        public static Vector2 invertVector(this Vector2 vec)
+        public static Vector2 InvertVectorNegXY(this Vector2 vec)
+        {
+            return new Vector2(-vec.y, -vec.x);
+        }
+        public static Vector2 InvertVector(this Vector2 vec)
         {
             return new Vector2(vec.y, vec.x);
         }
