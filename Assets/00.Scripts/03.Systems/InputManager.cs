@@ -15,7 +15,7 @@ namespace PEDREROR1.RUBIK
     [RequireComponent(typeof(CameraController))]
     sealed class InputManager : MonoBehaviour
     {
-#region PARAMETERS
+        #region PARAMETERS
 
         [Tooltip("Touch Sensitivity for Zoom Calculation")]
         public float touchSensitivity = 0.025f;
@@ -36,17 +36,17 @@ namespace PEDREROR1.RUBIK
         private bool isZooming = false;
         #endregion
 
-#region METHODS
+        #region METHODS
         private void Awake()
         {
-            if(cameraController==null)
+            if (cameraController == null)
             {
                 cameraController = GetComponent<CameraController>();
             }
         }
         private void Update()
         {
-            if (PlayerManager.Instance.currentState!=PlayerManager.GameState.Playing) return;
+            if (PlayerManager.Instance.currentState != PlayerManager.GameState.Playing) return;
 
             if (Input.GetMouseButtonDown(0))
             {
@@ -63,12 +63,8 @@ namespace PEDREROR1.RUBIK
             {
                 if (!PlayerManager.Instance.hasCublet && Input.touchCount < 2)
                 {
-                    
-                    if(!isZooming)
-                    RotationInput();
-                    
-                    
-                    
+                    if (!isZooming)
+                        RotationInput();
                 }
                 else if (PlayerManager.Instance.hasCublet && flickAvailable)
                 {
@@ -86,7 +82,7 @@ namespace PEDREROR1.RUBIK
         }
 
         Vector3 previouseMouseposition;
-        
+
         private void FlickInput()
         {
             cameraController.UpdateState(4);
@@ -100,13 +96,13 @@ namespace PEDREROR1.RUBIK
         }
 
         private void RotationInput()
-        {            
-            mousePosition = cameraController.GetScreenToViewPort(Input.mousePosition);            
+        {
+            mousePosition = cameraController.GetScreenToViewPort(Input.mousePosition);
             mousePositionDelta = mousePreviousPosition - mousePosition;
-            cameraController.UpdateState(1);           
-            cameraController.Rotate(((Vector2)(mousePositionDelta)).InvertVectorNegY()*rotationSpeed);
+            cameraController.UpdateState(1);
+            cameraController.Rotate(((Vector2)(mousePositionDelta)).InvertVectorNegY() * rotationSpeed);
             mousePreviousPosition = mousePosition;
-         }
+        }
 
         private void ZoomInput()
         {
@@ -135,23 +131,19 @@ namespace PEDREROR1.RUBIK
                 {
                     isZooming = false;
                 }
-
-
             }
             else if (Input.touchCount == 0)
             {
                 isZooming = false;
             }
 
-
-
-                if (cameraController && (Input.touchCount >= 2 || Input.mouseScrollDelta.y != 0))
+            if (cameraController && (Input.touchCount >= 2 || Input.mouseScrollDelta.y != 0))
             {
                 cameraController.UpdateState(2);
                 cameraController.CalculateZoom(pinchZoom * touchSensitivity, Input.mouseScrollDelta.y);
             }
         }
-        
+
         #endregion
     }
 }
