@@ -42,19 +42,18 @@ namespace PEDREROR1.RUBIK
             if(Mathf.Round(normal.y)!=1f)
             {
                 return mousePositionDelta;
-            }
+            }            
             switch(yRotation)
             {
                 case 0:
                 case 360:
-                    print(mousePositionDelta+" / " +mousePositionDelta.NegY());
-                    return mousePositionDelta.NegY();
+                     return mousePositionDelta.NegY();
                 case 90:
-                    return mousePositionDelta.invertVector();
+                     return mousePositionDelta.invertVector();
                 case 180:
-                    return mousePositionDelta.NegX();
+                     return mousePositionDelta.NegX();
                 case 270:
-                    return mousePositionDelta.invertVector().NegXY();
+                     return mousePositionDelta.invertVector().NegXY();
 
             }
             return mousePositionDelta;
