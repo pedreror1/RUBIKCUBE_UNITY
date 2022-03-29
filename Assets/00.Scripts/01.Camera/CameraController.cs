@@ -50,9 +50,9 @@ namespace PEDREROR1.RUBIK
         {
             _transform = transform;
             _camera = GetComponent<Camera>();
-            target = PlayerManager.Instance.getCenter;
-            cameraDistance = PlayerManager.Instance.dimension ;
-            CameraZoomRange = new Vector2(PlayerManager.Instance.dimension * 1.5f,PlayerManager.Instance.dimension * 3f);
+            target = PlayerManager.Instance.GetCenter;
+            cameraDistance = PlayerManager.Instance.Dimension ;
+            CameraZoomRange = new Vector2(PlayerManager.Instance.Dimension * 1.5f,PlayerManager.Instance.Dimension * 3f);
             _camera.orthographicSize = CameraZoomRange.x;
             _transform.position = target - _transform.forward * cameraDistance;
             CalculateZoom();

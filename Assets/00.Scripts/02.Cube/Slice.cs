@@ -104,7 +104,7 @@ namespace PEDREROR1.RUBIK
             transform.eulerAngles = transform.eulerAngles.FloorTo(90);
             foreach (var cublet in cublets)
             {
-                cublet.UpdateCubletParent(PlayerManager.Instance.cubeGenerator.transform);
+                cublet.UpdateCubletParent(PlayerManager.Instance.GetCubeTransform);
                 cublet.UpdateCubletPosition();
             }
 
@@ -187,7 +187,7 @@ namespace PEDREROR1.RUBIK
             {
                 if (cublet.getCubletParent() == transform)
                 {
-                    cublet.UpdateCubletParent(PlayerManager.Instance.cubeGenerator.transform);
+                    cublet.UpdateCubletParent(PlayerManager.Instance.GetCubeTransform);
 
                 }
                 else

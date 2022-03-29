@@ -5,10 +5,12 @@ using UnityEngine;
 
 namespace PEDREROR1.RUBIK.Utilities
 {
+    /// <summary>
+    /// The SaveData Class serves as a Definition of the data that should be saved by the
+    /// SaveManager Class
+    /// </summary>
     public class SaveData
     {
-        //   public Vector3[,,] cubletsOriginalPosition;
-        // public Vector3[,,] cubletscurrentPosition;
         public Stack<KeyValuePair<int, int>> movements = new Stack<KeyValuePair<int, int>>();
         public int dimensions;
         public float timer;
@@ -18,15 +20,14 @@ namespace PEDREROR1.RUBIK.Utilities
             this.dimensions = dimensions;
             this.timer = timer;
         }
-
-
     }
+
+    /// <summary>
+    /// The Save Manager Class is in charge Of The Saving and Loading of the data to a persistent
+    /// Text File
+    /// </summary>
     public class SaveManager : MonoBehaviour
     {
-
-      
-
-
         public void Save(Stack<KeyValuePair<Slice, int>> movements, int dimensions,float timer)
         {
             string Data= "Movements {";
@@ -43,21 +44,18 @@ namespace PEDREROR1.RUBIK.Utilities
             Data +="Size {"+dimensions+"}";
             Data += "Timer {" + timer+ "}";
 
-
             if (!Directory.Exists(Application.dataPath + "/SaveData"))
             {
                 Directory.CreateDirectory(Application.dataPath + "/SaveData");
             }
-            File.WriteAllText(Application.dataPath+"/SaveData/data.json",Data);
-            
+            File.WriteAllText(Application.dataPath+"/SaveData/data.json",Data);            
         }
         public SaveData LoadData()
-        {
-          
+        {          
             if (Directory.Exists(Application.dataPath + "/SaveData"))
             {
-                var jsonData=  File.ReadAllText(Application.dataPath + "/SaveData/data.json");
-                var dataSegments = jsonData.Split('}');
+                var savedData=  File.ReadAllText(Application.dataPath + "/SaveData/data.json");
+                var dataSegments = savedData.Split('}');
                 if(dataSegments.Length==4)
                 {
                     //Movements
@@ -73,10 +71,9 @@ namespace PEDREROR1.RUBIK.Utilities
                             {
                                 movementList.Push(new KeyValuePair<int, int>((int)movementasVector.x, (int)movementasVector.y));
                             }
-                        }
-                        
+                        }                        
                     }
-                    //Dimension
+                    //Dimension and Timer
                     int size = 3;
                     float timer = 0;
                     var x = dataSegments[1].Replace("Size {", "");
@@ -85,27 +82,10 @@ namespace PEDREROR1.RUBIK.Utilities
                     {
                         return new SaveData(movementList, size,timer);
                     }
-
-
                 }
                 return null;
-
             }
-            return null;
-            
-            
-        }
-       
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
+            return null;            
+        }          
     }
 }

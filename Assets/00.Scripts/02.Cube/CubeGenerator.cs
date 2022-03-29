@@ -29,8 +29,8 @@ namespace PEDREROR1.RUBIK
         public void generateCube()
         {
             if (!cublet || !Application.isPlaying || PlayerManager.Instance.cubeMatrix != null) return;
-
-            PlayerManager.Instance.cubeMatrix = new Cublet[PlayerManager.Instance.dimension, PlayerManager.Instance.dimension, PlayerManager.Instance.dimension];
+            currentSlice = 0;
+            PlayerManager.Instance.cubeMatrix = new Cublet[PlayerManager.Instance.Dimension, PlayerManager.Instance.Dimension, PlayerManager.Instance.Dimension];
             SetupXSlices();
             SetupYSlices();
             SetupZSlices();
@@ -39,19 +39,19 @@ namespace PEDREROR1.RUBIK
         private Slice CreateSlice(int currentSlice)
         {
             var newSlice = new GameObject($"Slice_{currentSlice}").AddComponent<Slice>();
-            newSlice.transform.position = PlayerManager.Instance.getCenter;
+            newSlice.transform.position = PlayerManager.Instance.GetCenter;
             newSlice.transform.parent = transform;
             PlayerManager.Instance.Slices.Add(newSlice);
             return newSlice;
         }
         private void SetupZSlices()
         {
-            for (int z = 0; z < PlayerManager.Instance.dimension; z++)
+            for (int z = 0; z < PlayerManager.Instance.Dimension; z++)
             {
                 Slice newSlice = CreateSlice(currentSlice);
-                for (int y = 0; y < PlayerManager.Instance.dimension; y++)
+                for (int y = 0; y < PlayerManager.Instance.Dimension; y++)
                 {
-                    for (int x = 0; x < PlayerManager.Instance.dimension; x++)
+                    for (int x = 0; x < PlayerManager.Instance.Dimension; x++)
                     {
                         if (PlayerManager.Instance.cubeMatrix[x, y, z] != null)
                         {
@@ -61,7 +61,7 @@ namespace PEDREROR1.RUBIK
                 }
                 if (z == 0)
                     newSlice.Setup(Slice.FaceType.Front);
-                else if (z == PlayerManager.Instance.dimension - 1)
+                else if (z == PlayerManager.Instance.Dimension - 1)
                     newSlice.Setup(Slice.FaceType.Back);
                 else
                     newSlice.Setup(Slice.FaceType.innerFace);
@@ -71,12 +71,12 @@ namespace PEDREROR1.RUBIK
 
         private void SetupYSlices()
         {
-            for (int y = 0; y < PlayerManager.Instance.dimension; y++)
+            for (int y = 0; y < PlayerManager.Instance.Dimension; y++)
             {
                 Slice newSlice = CreateSlice(currentSlice);
-                for (int z = 0; z < PlayerManager.Instance.dimension; z++)
+                for (int z = 0; z < PlayerManager.Instance.Dimension; z++)
                 {
-                    for (int x = 0; x < PlayerManager.Instance.dimension; x++)
+                    for (int x = 0; x < PlayerManager.Instance.Dimension; x++)
                     {
                         if (PlayerManager.Instance.cubeMatrix[x, y, z] != null)
                         {
@@ -87,7 +87,7 @@ namespace PEDREROR1.RUBIK
                 }
                 if (y == 0)
                     newSlice.Setup(Slice.FaceType.Down);
-                else if (y == PlayerManager.Instance.dimension - 1)
+                else if (y == PlayerManager.Instance.Dimension - 1)
                     newSlice.Setup(Slice.FaceType.Top);
                 else
                     newSlice.Setup(Slice.FaceType.innerFace);
@@ -98,14 +98,14 @@ namespace PEDREROR1.RUBIK
 
         private void SetupXSlices()
         {
-            for (int x = 0; x < PlayerManager.Instance.dimension; x++)
+            for (int x = 0; x < PlayerManager.Instance.Dimension; x++)
             {
                 Slice newSlice = CreateSlice(currentSlice);
-                for (int y = 0; y < PlayerManager.Instance.dimension; y++)
+                for (int y = 0; y < PlayerManager.Instance.Dimension; y++)
                 {
-                    for (int z = 0; z < PlayerManager.Instance.dimension; z++)
+                    for (int z = 0; z < PlayerManager.Instance.Dimension; z++)
                     {
-                        if (x == 0 || y == 0 || z == 0 || x == PlayerManager.Instance.dimension - 1 || y == PlayerManager.Instance.dimension - 1 || z == PlayerManager.Instance.dimension - 1)
+                        if (x == 0 || y == 0 || z == 0 || x == PlayerManager.Instance.Dimension - 1 || y == PlayerManager.Instance.Dimension - 1 || z == PlayerManager.Instance.Dimension - 1)
                         {
                             Vector3 position = new Vector3(x, y, z);
                             {
@@ -119,7 +119,7 @@ namespace PEDREROR1.RUBIK
                 }
                 if (x == 0)
                     newSlice.Setup(Slice.FaceType.Left);
-                else if (x == PlayerManager.Instance.dimension - 1)
+                else if (x == PlayerManager.Instance.Dimension - 1)
                     newSlice.Setup(Slice.FaceType.Right);
                 else
                     newSlice.Setup(Slice.FaceType.innerFace);
