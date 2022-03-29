@@ -15,56 +15,103 @@ namespace PEDREROR1.RUBIK
     [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
-#region PARAMETERS
+        #region PARAMETERS
         private enum CameraState
         {
-            Idle=0,
-            RotatingCamera=1,
-            ZoomingCamera=2,
-            Animating=3,
-            WaitingForFLick=4
+            Idle = 0,
+            RotatingCamera = 1,
+            ZoomingCamera = 2,
+            Animating = 3,
+            WaitingForFLick = 4
         }
-        private CameraState currentCameraState;        
+        private CameraState currentCameraState;
         private Camera cam;
         private Vector3 target;
         Vector3 selectedCubletNormal;
         private float cameraDistance = 5;
-        public Vector2 cameraZoomRange = new Vector2(3f, 15f);      
+        public Vector2 cameraZoomRange = new Vector2(3f, 15f);
         public LayerMask cubletMask;
         private Vector2 currentAngle = new Vector2(0, 0f);
         public Vector2 cameraXrotationLimit;
         #endregion
 
-#region METHODS
-        public void UpdateState(int newState) => currentCameraState = (CameraState)newState;       
+        #region METHODS
+        public void UpdateState(int newState) => currentCameraState = (CameraState)newState;
         public Vector2 GetOrientedDirection(float yRotation, Vector2 mousePositionDelta, Vector3 normal)
         {
-            if(Mathf.Round(normal.y)!=1f)
+            if (Mathf.Round(normal.y) != 1f)
             {
                 return mousePositionDelta;
-            }            
-            switch(yRotation)
+            }
+
+            switch (yRotation)
             {
+
                 case 0:
                 case 360:
-                     return mousePositionDelta.NegY();
+                    return mousePositionDelta.NegY();
+
+                case 45:
+                    if (mousePositionDelta.x < 0 && mousePositionDelta.y <= 0)
+                        return new Vector2(mousePositionDelta.x, 0);
+                    else if (mousePositionDelta.x < 0 && mousePositionDelta.y >= 0)
+                        return new Vector2(0, mousePositionDelta.x);
+                    else if (mousePositionDelta.x > 0 && mousePositionDelta.y >= 0)
+                        return new Vector2(mousePositionDelta.x, 0);
+                    else //x>0 y<0
+                        return new Vector2(0, mousePositionDelta.x);
+
                 case 90:
-                     return mousePositionDelta.invertVector();
+                    return mousePositionDelta.invertVector();
+
+                case 135:
+                    if (mousePositionDelta.x < 0 && mousePositionDelta.y <= 0)
+                        return new Vector2(0, mousePositionDelta.x);
+                    else if (mousePositionDelta.x < 0 && mousePositionDelta.y >= 0)
+                        return new Vector2(-mousePositionDelta.x, 0);
+                    else if (mousePositionDelta.x > 0 && mousePositionDelta.y >= 0)
+                        return new Vector2(0, mousePositionDelta.x);
+                    else //x>0 y<0
+                        return new Vector2(-mousePositionDelta.x, 0);
+
                 case 180:
-                     return mousePositionDelta.NegX();
+                    return mousePositionDelta.NegX();
+
+                case 225:
+                    if (mousePositionDelta.x < 0 && mousePositionDelta.y <= 0)
+                        return new Vector2(-mousePositionDelta.x, 0);
+                    else if (mousePositionDelta.x < 0 && mousePositionDelta.y >= 0)
+                        return new Vector2(0, -mousePositionDelta.x);
+                    else if (mousePositionDelta.x > 0 && mousePositionDelta.y >= 0)
+                        return new Vector2(-mousePositionDelta.x, 0);
+                    else //x>0 y<0
+                        return new Vector2(0, -mousePositionDelta.x);
+
                 case 270:
-                     return mousePositionDelta.invertVector().NegXY();
+                    return mousePositionDelta.invertVector().NegXY();
+
+                case 315:
+                    if (mousePositionDelta.x < 0 && mousePositionDelta.y <= 0)
+                        return new Vector2(0, -mousePositionDelta.x);
+                    else if (mousePositionDelta.x < 0 && mousePositionDelta.y >= 0)
+                        return new Vector2(mousePositionDelta.x, 0);
+                    else if (mousePositionDelta.x > 0 && mousePositionDelta.y >= 0)
+                        return new Vector2(0, -mousePositionDelta.x);
+                    else //x<0 y<0
+                        return new Vector2(mousePositionDelta.x, 0);
+
+
 
             }
             return mousePositionDelta;
         }
-        public bool CalculateFlickDirection(Vector3 mousePositionDelta )
+        public bool CalculateFlickDirection(Vector3 mousePositionDelta)
         {
-                var currentCameraAngle=((transform.rotation.eulerAngles.y%360 +360)%360);
-                currentCameraAngle=Mathf.Round(currentCameraAngle / 90) * 90;               
-                PlayerManager.Instance.TryRotate(GetOrientedDirection(currentCameraAngle,mousePositionDelta,selectedCubletNormal));
-                return false;
-            
+            var currentCameraAngle = ((transform.rotation.eulerAngles.y % 360 + 360) % 360);
+            currentCameraAngle = Mathf.Round(currentCameraAngle / 45) * 45;
+            PlayerManager.Instance.TryRotate(GetOrientedDirection(currentCameraAngle, mousePositionDelta, selectedCubletNormal));
+            return false;
+
         }
         public Vector3 GetScreenToViewPort(Vector2 mousePosition)
         {
@@ -72,8 +119,8 @@ namespace PEDREROR1.RUBIK
         }
         public void Rotate(Vector2 offset)
         {
-            currentAngle -=  offset;
-            currentAngle.x= Mathf.Clamp(currentAngle.x, cameraXrotationLimit.x, cameraXrotationLimit.y);
+            currentAngle -= offset;
+            currentAngle.x = Mathf.Clamp(currentAngle.x, cameraXrotationLimit.x, cameraXrotationLimit.y);
             if (currentAngle.y > 360f) currentAngle.y -= 360f;
             else if (currentAngle.y < 0f) currentAngle.y += 360f;
             Quaternion lookRotatipn = Quaternion.Euler(currentAngle);
@@ -81,30 +128,30 @@ namespace PEDREROR1.RUBIK
             Vector3 lookPosition = target - lookDirection * cameraDistance;
             transform.SetPositionAndRotation(lookPosition, lookRotatipn);
         }
-      
+
         //TODO implement pinch in/out
-        public void CalculateZoom(float touchZoom=0, float MouseZoom=0, float extraZoom=0)
+        public void CalculateZoom(float touchZoom = 0, float MouseZoom = 0, float extraZoom = 0)
         {
-            
-               
+
+
             cameraDistance = Mathf.Clamp(cameraDistance - (touchZoom + MouseZoom + extraZoom), cameraZoomRange.x, cameraZoomRange.y);
             cam.orthographicSize = cameraDistance;
 
         }
 
-        
+
         public bool TryGetCublet()
         {
-            if (currentCameraState== CameraState.RotatingCamera) return false;
-            
+            if (currentCameraState == CameraState.RotatingCamera) return false;
+
             Vector3 mousePosition3D = Input.mousePosition;
             mousePosition3D.z = 10;
             Ray camRay = cam.ScreenPointToRay(mousePosition3D);
             RaycastHit hit;
-            if (Physics.Raycast(camRay, out hit,10f,cubletMask))
+            if (Physics.Raycast(camRay, out hit, 10f, cubletMask))
             {
                 PlayerManager.Instance.UpdateCurrentCublet(hit);
-                selectedCubletNormal = hit.normal;               
+                selectedCubletNormal = hit.normal;
                 return true;
             }
             else
@@ -129,6 +176,6 @@ namespace PEDREROR1.RUBIK
             CalculateZoom();
         }
     }
-#endregion
+    #endregion
 }
 
